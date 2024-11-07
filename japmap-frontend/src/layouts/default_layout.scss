@@ -1,0 +1,32 @@
+@import "../assets/variables.scss";
+
+.Default {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  height: 100%;
+  flex: 1;
+  &_SidebarContainer {
+    min-width: calc(200px - 60px);
+    background-color: $primaryColor;
+    color: $textColor;
+    display: flex;
+    flex-direction: column;
+    padding: 30px;
+  }
+
+  &_Content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    &Wrapper {
+      display: flex;
+      max-width: 80%;
+      min-width: 800px;
+      width: 100%;
+      flex: 1 0 0;
+      padding: 30px 0px 0 0;
+    }
+  }
+}

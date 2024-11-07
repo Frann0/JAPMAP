@@ -1,0 +1,15 @@
+.HomePage {
+  display: flex;
+  height: 100%;
+  flex: 1;
+  flex-direction: column;
+  &_Content {
+    flex: 1 0 0;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    div {
+      min-height: 2000px;
+    }
+  }
+}
