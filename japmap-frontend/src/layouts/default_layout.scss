@@ -13,6 +13,22 @@
     display: flex;
     flex-direction: column;
     padding: 30px;
+    .Default_SidebarTitle {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      font-weight: 900;
+      -webkit-background-clip: text !important;
+      -webkit-text-fill-color: transparent;
+      background: -webkit-linear-gradient(
+        270deg,
+        $backgroundColor 0%,
+        $secondaryColor 100%
+      );
+      cursor: pointer;
+      user-select: none;
+    }
   }
 
   &_Content {
