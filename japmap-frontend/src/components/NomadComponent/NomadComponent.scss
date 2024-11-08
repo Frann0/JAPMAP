@@ -1,0 +1,58 @@
+@import "../../assets/variables.scss";
+
+.NomadComponent {
+  display: flex;
+  flex-direction: row;
+  flex: 1;
+  align-items: center;
+  min-height: 40px;
+
+  &_Indent {
+    width: 10px;
+    height: 10px;
+    position: relative;
+    &::before {
+      content: "";
+      position: absolute;
+      transform: translate(-50%, -50%);
+      top: calc(50% - calc(10px / 2));
+      left: calc(50%);
+      width: 10px;
+      height: 10px;
+      border-radius: 0 0 0 5px;
+      border-left: 1px solid $decorationBorder;
+      border-bottom: 1px solid $decorationBorder;
+    }
+  }
+
+  &_Content {
+    flex-direction: row;
+    max-height: calc(40px - 20px);
+    border-radius: 5px;
+    border: 1px solid $decorationBorder;
+    display: flex;
+    flex: 1;
+    align-items: center;
+    padding: 8px 10px;
+    gap: 10px;
+    &Name {
+      flex: 1;
+      font-size: 16px;
+      display: flex;
+      align-items: center;
+    }
+    &Status {
+      font-size: 16px;
+      display: flex;
+      align-items: center;
+    }
+  }
+}
+
+.NomadComponent_ContentStatus_Running {
+  color: $nomadStatusHealthy;
+}
+
+.NomadComponent_ContentStatus_Stopped {
+  color: $nomadStatusStopped;
+}

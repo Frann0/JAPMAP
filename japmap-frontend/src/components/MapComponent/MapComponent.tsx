@@ -3,11 +3,14 @@ import "./MapComponent.scss";
 import { IMapComponent } from "../../interfaces/IMapComponent";
 import Chevron from "../shared/chevron/Chevron";
 import Icon from "../shared/icon/Icon";
+import NomadComponent from "../NomadComponent/NomadComponent";
 
 const MapComponent = ({ map }: { map: IMapComponent }) => {
   return (
     <>
-      <div className="MapComponent">
+      <div
+        className={`MapComponent ${map.project.open ? "MapComponent_Open" : "MapComponent_Closed"}`}
+      >
         <div className="MapComponent_ProjectIcon">
           <Icon icon={map.project.icon} />
         </div>
@@ -18,6 +21,15 @@ const MapComponent = ({ map }: { map: IMapComponent }) => {
         <div className="MapComponent_ChevronContainer">
           <div className="MapComponent_Divider"></div>
           <Chevron map={map} />
+        </div>
+      </div>
+      <div
+        className={`MapComponent_Nomad ${map.project.open ? "MapComponent_Nomad_Open" : "MapComponent_Nomad_Closed"}`}
+      >
+        <div className="MapComponent_NomadContainer">
+          {map.nomadInstances.map((nomad) => (
+            <NomadComponent nomad={nomad} />
+          ))}
         </div>
       </div>
     </>

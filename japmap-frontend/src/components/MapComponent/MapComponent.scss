@@ -11,6 +11,7 @@
   background-color: $primary20;
   color: $textColor;
   gap: 10px;
+  transition: all $defaultTransitionTime ease-in-out;
   &_ProjectIcon {
     width: 24px;
     height: 24px;
@@ -45,4 +46,46 @@
     justify-content: center;
     height: 24px;
   }
+}
+
+.MapComponent_Open {
+  border-radius: 10px 10px 0 0;
+}
+
+.MapComponent_Closed {
+  max-height: calc(60px - 20px);
+  border-radius: 10px;
+  transition: all $defaultTransitionTime ease-in-out $defaultTransitionTime;
+}
+
+.MapComponent_Nomad {
+  background-color: $primary20;
+  flex-direction: row;
+  display: flex;
+  min-height: 0px;
+  border-radius: 0 0 10px 10px;
+  transition: all $defaultTransitionTime ease-in-out $defaultTransitionTime;
+  visibility: hidden;
+  padding: 0px 10px 10px 30px;
+  &Container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    border-radius: 5px 0 0 0;
+    border-left: 1px solid $decorationBorder;
+    border-top: 1px solid $decorationBorder;
+    flex: 1;
+    padding-top: 15px;
+  }
+}
+
+.MapComponent_Nomad_Open {
+  min-height: 60px;
+  visibility: visible;
+}
+
+.MapComponent_Nomad_Closed {
+  min-height: 0px;
+  visibility: hidden;
+  transition: all $defaultTransitionTime ease-in-out;
 }
