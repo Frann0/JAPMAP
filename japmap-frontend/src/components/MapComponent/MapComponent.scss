@@ -1,5 +1,12 @@
 @import "../../assets/variables.scss";
 .MapComponent {
+  display: flex;
+  flex-direction: column;
+  max-height: calc(60px - 20px);
+  overflow: hidden;
+  transition: all $defaultTransitionTime ease-in-out $defaultTransitionTime;
+}
+.MapComponent_Project {
   width: calc(100% - 20px);
   padding: 10px;
   border-radius: 10px;
@@ -12,7 +19,7 @@
   color: $textColor;
   gap: 10px;
   transition: all $defaultTransitionTime ease-in-out;
-  &_ProjectIcon {
+  &Icon {
     width: 24px;
     height: 24px;
     overflow: hidden;
@@ -20,21 +27,21 @@
     align-items: center;
     justify-content: center;
   }
-  &_ProjectName {
+  &Name {
     font-size: 18px;
     display: flex;
     align-items: center;
     flex: 1;
   }
-  &_ProjectInstanceCount {
+  &InstanceCount {
     font-size: 14px;
     display: flex;
     align-items: center;
     display: flex;
   }
-  &_Divider {
+  &Divider {
   }
-  &_ChevronContainer {
+  &ChevronContainer {
     .MapComponent_Divider {
       width: 1px;
       height: 100%;
@@ -50,6 +57,17 @@
 
 .MapComponent_Open {
   border-radius: 10px 10px 0 0;
+  max-height: 100%;
+}
+
+.MapComponent_ProjectOpen {
+  border-radius: 10px 10px 0 0;
+}
+
+.MapComponent_ProjectClosed {
+  max-height: calc(60px - 20px);
+  border-radius: 10px;
+  transition: all $defaultTransitionTime ease-in-out $defaultTransitionTime;
 }
 
 .MapComponent_Closed {
@@ -62,10 +80,7 @@
   background-color: $primary20;
   flex-direction: row;
   display: flex;
-  min-height: 0px;
   border-radius: 0 0 10px 10px;
-  transition: all $defaultTransitionTime ease-in-out $defaultTransitionTime;
-  visibility: hidden;
   padding: 0px 10px 10px 30px;
   &Container {
     display: flex;
@@ -77,15 +92,4 @@
     flex: 1;
     padding-top: 15px;
   }
-}
-
-.MapComponent_Nomad_Open {
-  min-height: 60px;
-  visibility: visible;
-}
-
-.MapComponent_Nomad_Closed {
-  min-height: 0px;
-  visibility: hidden;
-  transition: all $defaultTransitionTime ease-in-out;
 }

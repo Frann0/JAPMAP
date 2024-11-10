@@ -56,7 +56,7 @@ export const buildMap = async (gitlabUrl: string) => {
   const instances = await getNomadInstances(prefix);
 
   const map = {
-    id: 1,
+    id: 2,
     project: {
       id: id,
       icon: "GITLAB",
@@ -64,7 +64,7 @@ export const buildMap = async (gitlabUrl: string) => {
       healthyInstanceCount: getNomadHealthyCount(instances),
       instanceCount: getNomadCount(instances),
     },
-    nomadIntances: transformNomadInstances(instances),
+    nomadInstances: transformNomadInstances(instances),
   };
 
   return map;

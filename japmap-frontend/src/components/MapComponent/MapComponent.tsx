@@ -7,9 +7,11 @@ import NomadComponent from "../NomadComponent/NomadComponent";
 
 const MapComponent = ({ map }: { map: IMapComponent }) => {
   return (
-    <>
+    <div
+      className={`MapComponent ${map.project.open ? "MapComponent_Open" : "MapComponent_Closed"}`}
+    >
       <div
-        className={`MapComponent ${map.project.open ? "MapComponent_Open" : "MapComponent_Closed"}`}
+        className={`MapComponent_Project ${map.project.open ? "MapComponent_ProjectOpen" : "MapComponent_ProjectClosed"}`}
       >
         <div className="MapComponent_ProjectIcon">
           <Icon icon={map.project.icon} />
@@ -18,8 +20,8 @@ const MapComponent = ({ map }: { map: IMapComponent }) => {
         <div className="MapComponent_ProjectInstanceCount">
           {map.project.healthyInstanceCount}/{map.project.instanceCount}
         </div>
-        <div className="MapComponent_ChevronContainer">
-          <div className="MapComponent_Divider"></div>
+        <div className="MapComponent_ProjectChevronContainer">
+          <div className="MapComponent_ProjectDivider"></div>
           <Chevron map={map} />
         </div>
       </div>
@@ -32,7 +34,7 @@ const MapComponent = ({ map }: { map: IMapComponent }) => {
           ))}
         </div>
       </div>
-    </>
+    </div>
   );
 };
 

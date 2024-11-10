@@ -9,5 +9,11 @@
     overflow-y: auto;
     display: flex;
     flex-direction: column;
+    gap: 15px;
   }
+}
+
+.TEST_INPUT {
+  display: flex;
+  flex-direction: column;
 }

@@ -5,6 +5,7 @@ export interface IMapComponent {
 }
 
 export interface IProject {
+  id: number;
   icon: EIcon;
   name: string;
   healthyInstanceCount: number;
@@ -13,14 +14,15 @@ export interface IProject {
 }
 
 export interface INomadInstance {
+  id: string;
   icon: EIcon;
   name: string;
   status: ENomadStatus;
 }
 
 export enum ENomadStatus {
-  STOPPED = "STOPPED",
-  HEALTHY = "HEALTHY",
+  STOPPED = "dead",
+  HEALTHY = "running",
 }
 
 export enum EIcon {
