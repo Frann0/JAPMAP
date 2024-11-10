@@ -8,7 +8,7 @@ const Chevron = ({ map }: { map: IMapComponent }) => {
   const { mapStore } = useStore();
 
   const toggle = () => {
-    mapStore.toggleProject(map.id);
+    mapStore.toggleProject(map.project.id);
   };
 
   return (

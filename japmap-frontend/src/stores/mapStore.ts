@@ -9,7 +9,6 @@ import { getMapping } from "../services/mappingService";
 export class MapStore {
   mappings: IMapComponent[] = [
     {
-      id: 1,
       project: {
         id: 1,
         icon: EIcon.GITLAB,
@@ -46,11 +45,15 @@ export class MapStore {
   }
 
   addMapping(mapping: IMapComponent) {
-    this.mappings.push(mapping);
+    if (!this.mappings.find((m) => m.project.id === mapping.project.id)) {
+      this.mappings.push(mapping);
+    }
   }
 
   toggleProject(id: number) {
-    const project = this.mappings.find((mapping) => mapping.id === id)?.project;
+    const project = this.mappings.find(
+      (mapping) => mapping.project.id === id,
+    )?.project;
     if (project) {
       project.open = !project.open;
     }
@@ -60,9 +63,7 @@ export class MapStore {
     getMapping(gitlabURL).then((mapping) => {
       const m = mapping as IMapComponent;
       m.project.open = false;
-      console.log(m);
       this.addMapping(m);
-      console.log(this.mappings);
     });
   }
 

@@ -1,5 +1,4 @@
 export interface IMapComponent {
-  id: number;
   project: IProject;
   nomadInstances: INomadInstance[];
 }
