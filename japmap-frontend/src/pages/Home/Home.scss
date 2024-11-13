@@ -1,9 +1,35 @@
+@import '../../assets/variables.scss';
+
 .HomePage {
   display: flex;
   height: 100%;
   flex: 1;
   flex-direction: column;
   gap: 40px;
+
+  &_Add{
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    border: 1px solid $decorationBorder;
+    background: $primary5; 
+    padding: 5px; 
+    cursor: pointer;
+
+    transition: all $defaultTransitionTime ease-in-out;
+
+    &:hover{
+      transform: scale(1.01);
+    }
+
+    &Text{
+      line-height:1;
+    }
+  }
+
   &_Content {
     flex: 1 0 0;
     overflow-y: auto;
@@ -13,7 +39,85 @@
   }
 }
 
-.TEST_INPUT {
+.Add_Modal{
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+
   display: flex;
-  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: $titleDivider;
+
+  &Content{
+    max-width: 800px;
+    height: fit-content;
+    display:flex;
+    padding: 20px;
+    border-radius: 10px;
+    background: $backgroundColor;
+    flex-direction: column;
+    z-index: 1000;
+
+    &_Container{
+      display:flex;
+      flex-direction: column;
+      padding: 10px 0px;
+      gap: 25px;
+      border-bottom: 1px solid $decorationBorder;
+      &Text{
+        font-size: 14px;
+        color: $primaryColor;
+      }
+      &Input{
+        border-radius: 10px;
+        border: 1px solid $decorationBorder;
+        display:flex;
+        flex-direction: row;
+        background: $primary5;
+        height: 30px;
+        padding: 0px 10px;
+        .input{
+          background: transparent;
+          flex: 1;
+          outline: none;
+          border: none;
+          color: $textColor;
+        }
+      }
+    }
+    &_Buttons{
+      display:flex;
+      flex-direction:row;
+      align-items: center;
+      justify-content: end;
+      padding: 10px 0 0 0;
+      gap: 10px;
+      
+      .button{
+        width: 100px;
+        height: 30px;
+        border-radius:10px;
+        background: primary5;
+        border: 1px solid $decorationBorder;
+        cursor: pointer;
+        transition: all $defaultTransitionTime ease-in-out;
+
+        &:hover{
+          transform: scale(1.025);
+        }
+      }
+      .confirm{
+        border:none;
+        background: #608A5B;
+        color: $backgroundColor;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+    }
+    
+  }
 }

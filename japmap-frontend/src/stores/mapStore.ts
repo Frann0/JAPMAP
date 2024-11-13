@@ -59,8 +59,8 @@ export class MapStore {
     }
   }
 
-  fetchMapping(gitlabURL: string) {
-    getMapping(gitlabURL).then((mapping) => {
+  async fetchMapping(gitlabURL: string) {
+    await getMapping(gitlabURL).then((mapping) => {
       const m = mapping as IMapComponent;
       m.project.open = false;
       this.addMapping(m);
