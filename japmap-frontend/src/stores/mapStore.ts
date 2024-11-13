@@ -4,47 +4,16 @@ import {
   IMapComponent,
   ENomadStatus,
 } from "../interfaces/IMapComponent";
-import { getMapping } from "../services/mappingService";
+import { getAllMappings, addMapping } from "../services/mappingService";
 
 export class MapStore {
-  mappings: IMapComponent[] = [
-    {
-      project: {
-        id: 1,
-        icon: EIcon.GITLAB,
-        name: "Gitlab",
-        healthyInstanceCount: 2,
-        instanceCount: 3,
-        open: false,
-      },
-      nomadInstances: [
-        {
-          id: "Nomad-1",
-          icon: EIcon.NOMAD,
-          name: "Nomad 1",
-          status: ENomadStatus.HEALTHY,
-        },
-        {
-          id: "Nomad-2",
-          icon: EIcon.NOMAD,
-          name: "Nomad 2",
-          status: ENomadStatus.STOPPED,
-        },
-        {
-          id: "Nomad-3",
-          icon: EIcon.NOMAD,
-          name: "Nomad 3",
-          status: ENomadStatus.HEALTHY,
-        },
-      ],
-    },
-  ];
+  mappings: IMapComponent[] = [];
 
   setMappings(mappings: IMapComponent[]) {
     this.mappings = mappings;
   }
 
-  addMapping(mapping: IMapComponent) {
+  pushMapping(mapping: IMapComponent) {
     if (!this.mappings.find((m) => m.project.id === mapping.project.id)) {
       this.mappings.push(mapping);
     }
@@ -59,12 +28,17 @@ export class MapStore {
     }
   }
 
-  async fetchMapping(gitlabURL: string) {
-    await getMapping(gitlabURL).then((mapping) => {
+  async addMapping(gitlabURL: string) {
+    await addMapping(gitlabURL).then((mapping) => {
       const m = mapping as IMapComponent;
       m.project.open = false;
-      this.addMapping(m);
+      this.pushMapping(m);
     });
+  }
+
+  async fetchAllMappings() {
+    const mappings = await getAllMappings();
+    this.setMappings(mappings);
   }
 
   constructor() {

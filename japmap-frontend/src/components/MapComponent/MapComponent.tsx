@@ -4,14 +4,17 @@ import { IMapComponent } from "../../interfaces/IMapComponent";
 import Chevron from "../shared/chevron/Chevron";
 import Icon from "../shared/icon/Icon";
 import NomadComponent from "../NomadComponent/NomadComponent";
+import { useStore } from "../../stores/store";
 
 const MapComponent = ({ map }: { map: IMapComponent }) => {
+  const { mapStore } = useStore();
   return (
     <div
       className={`MapComponent ${map.project.open ? "MapComponent_Open" : "MapComponent_Closed"}`}
     >
       <div
         className={`MapComponent_Project ${map.project.open ? "MapComponent_ProjectOpen" : "MapComponent_ProjectClosed"}`}
+        onClick={() => mapStore.toggleProject(map.project.id)}
       >
         <div className="MapComponent_ProjectIcon">
           <Icon icon={map.project.icon} />

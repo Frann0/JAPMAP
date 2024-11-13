@@ -22,6 +22,10 @@ const HomePage: FC = () => {
     });
   };
 
+  useEffect(() => {
+    mapStore.fetchAllMappings();
+  }, []);
+
   return (
     <>
       {showModal && (
@@ -45,7 +49,7 @@ const HomePage: FC = () => {
               <button className="button confirm" onClick={() => addProject()}>{loading ? <div className="Spinner_White" /> : "Bekræft"}</button>
             </div>
           </div>
-        </div>                
+        </div>                 
               )}
 <div className="HomePage">
   <Title title="Projekter" />

@@ -134,3 +134,10 @@ export const addMap = async (gitlabProject, nomadInstances, nomadPrefix) => {
 
   return map;
 };
+
+export const getAllMaps = async () => {
+  const maps = await prisma.gitlabProject.findMany({
+    include: { nomadInstances: true },
+  });
+  return maps.map((map) => transformMap(map));
+}
