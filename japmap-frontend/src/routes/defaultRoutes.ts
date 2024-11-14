@@ -1,10 +1,10 @@
 import { IRoute } from "./IRoute";
-import HomePage from "../pages/Home/Home";
+import ProjectPage from "../pages/Project/Project";
 
 export const DefaultRoutes: IRoute[] = [
   {
-    path: "/",
-    component: HomePage,
-    name: "Home",
+    path: "/projekter",
+    component: ProjectPage,
+    name: "Projekter",
   },
 ];

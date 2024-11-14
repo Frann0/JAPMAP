@@ -17,7 +17,7 @@
       position: absolute;
       transform: translate(-50%, -50%);
       top: calc(50% - calc(10px / 2));
-      left: calc(50%);
+      left: calc(50% - 1px);
       width: 10px;
       height: 10px;
       border-radius: 0 0 0 5px;

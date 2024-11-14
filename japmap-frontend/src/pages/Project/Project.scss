@@ -1,11 +1,11 @@
 @import '../../assets/variables.scss';
 
-.HomePage {
+.Project {
   display: flex;
   height: 100%;
   flex: 1;
   flex-direction: column;
-  gap: 40px;
+  gap: 20px;
 
   &_Add{
     display: flex;
