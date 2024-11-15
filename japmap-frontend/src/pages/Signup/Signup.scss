@@ -1,0 +1,100 @@
+
+@import '../../assets/variables.scss';
+
+.Signup{
+  max-width: 290px;
+  height: fit-content;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  border-radius: 10px;
+  background-color: $primary5;
+  border: 1px solid $decorationBorder;
+  padding: 20px;
+  &_Title{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-bottom: 1px solid $decorationBorder;
+    padding: 10px 0;
+    &Text{
+      color: $primaryColor;
+      font-size: 24px;
+      font-weight: 900;
+    }
+  }
+  &_Error{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    border-top: 1px solid $decorationBorder;
+    padding: 10px 0;
+    &Text{
+      font-size: 16px;
+      color: red;
+    }
+  }
+  &_Form{
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding: 30px 0;
+    &_InputContainer{
+      border-radius: 10px;
+      border: 1px solid $decorationBorder;
+      display:flex;
+      flex-direction: row;
+      background: $primary5;
+      height: 30px;
+      padding: 0px 10px;
+      .input{
+        background-color: transparent !important;
+        flex: 1;
+        outline: none;
+        border: none;
+        color: $textColor;
+      }
+    }
+    &_Button{
+      margin-top: 50px;
+      padding: 10px;
+      border-radius: 10px;
+      background-color: $primaryColor;
+      color: $backgroundColor;
+      font-size: 16px;
+      cursor: pointer;
+      transition: all $defaultTransitionTime ease-in-out;
+      outline: none;
+      border: none;
+      &:hover{
+        transform: scale(1.01);
+      }
+    }
+  }
+
+  &_Signup{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    padding: 10px 0;
+    gap: 10px;
+    border-top: 1px solid $decorationBorder;
+    &_Text{
+      font-size: 16px;
+      color: $primaryColor;
+    }
+    &_Link{
+      font-size: 16px;
+      color: $accentColor;
+      text-decoration: none;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all $defaultTransitionTime ease-in-out;
+      &:hover{
+        color: $primaryColor;
+      }
+    }
+  }
+}

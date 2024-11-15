@@ -55,7 +55,6 @@ const filterNomadInstances = (instances: any) => {
 };
 
 const transformMap = (map) => {
-  console.log(map);
   return {
     project: {
       id: map.gitlabId,
@@ -141,3 +140,17 @@ export const getAllMaps = async () => {
   });
   return maps.map((map) => transformMap(map));
 }
+
+
+export const signUp = async (user) => {
+  const u = await prisma.user.create({
+    data: {
+      displayName: user.displayName,
+      email: user.email,
+      id: user.localId,
+      emailVerified: user.emailVerified
+    }
+  })
+  console.log(u);
+  return u;
+}  

@@ -1,6 +1,7 @@
 import { makeAutoObservable } from "mobx";
-import { getAuth, signInWithEmailAndPassword, signOut } from "firebase/auth";
+import { createUserWithEmailAndPassword, getAuth, signInWithEmailAndPassword, signOut, updateProfile } from "firebase/auth";
 import { initializeApp } from "firebase/app";
+import { signUp } from "../services/authService";
 const firebaseConfig = {
   apiKey: "AIzaSyAhzH7U2hE6oluNkjNtn0W0qZgdP8Yi2hs",
   authDomain: "japmap-1d707.firebaseapp.com",
@@ -28,6 +29,16 @@ export class AuthStore {
     })
   }
 
+  async signup(email: string, password: string, firstname: string, lastname: string) {
+    await createUserWithEmailAndPassword(auth, email, password).then(async (user) => {
+      await updateProfile(auth.currentUser!, {
+        displayName: `${firstname} ${lastname}`
+      }).then(() => {
+        this.setUser(auth.currentUser);
+      })
+      await signUp({ displayName: auth.currentUser!.displayName!, email: auth.currentUser!.email!, localId: auth.currentUser!.uid, emailVerified: auth.currentUser!.emailVerified })
+    })
+  }
   async logout() {
     await signOut(auth).then(() => {
       this.setUser(null);

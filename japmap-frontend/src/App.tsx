@@ -6,6 +6,7 @@ import Auth_Layout from "./layouts/auth_layout";
 import { AuthRoutes } from "./routes/authRoutes";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { useStore } from "./stores/store";
+import { observer } from "mobx-react-lite";
 
 function App() {
   const navigate = useNavigate();
@@ -51,4 +52,4 @@ function App() {
   );
 }
 
-export default App;
+export default observer(App);

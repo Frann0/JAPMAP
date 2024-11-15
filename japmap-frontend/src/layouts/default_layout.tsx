@@ -1,13 +1,17 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Outlet, Link, useNavigate } from "react-router-dom";
 import { DefaultRoutes } from "../routes/defaultRoutes";
 import "./default_layout.scss";
 import { useStore } from "../stores/store";
 import { observer } from "mobx-react-lite";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 
 const Default_Layout = () => {
   const { authStore } = useStore();
   const navigate = useNavigate();
+  const [displayName, setDisplayName] = useState<string>(authStore.user?.displayName! || '');
+  const auth = getAuth();
+
 
   const handleLogout = async () => {
     authStore.logout().then(() => {
@@ -29,7 +33,7 @@ const Default_Layout = () => {
               ))}
           </div>
           <div className="Default_SidebarUser">
-            <p>{authStore.user ? authStore.user.email : ''}</p>
+            <p>{displayName}</p>
             <div onClick={() => handleLogout()} className="Default_SidebarUserLogout">Logout</div>
           </div>
         </div>

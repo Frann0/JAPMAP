@@ -14,27 +14,37 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model User {
+  id            String          @id
+  email         String          @unique
+  displayName   String
+  emailVerified Boolean
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  GitlapProject GitlabProject[]
+}
+
 model GitlabProject {
-  gitlabId    Int      @id @map("id")
-  nomadPrefix String
-  name        String
-  path        String
-  namespace   String
-  visibility  String
-  description String?
-  webUrl      String
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  gitlabId       Int             @id @map("id")
+  nomadPrefix    String
+  name           String
+  path           String
+  namespace      String
+  visibility     String
+  description    String?
+  webUrl         String
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
   nomadInstances NomadInstance[]
+  User           User[]
 }
 
 model NomadInstance {
-  id        String   @id
-  name      String
-  status    String
-  GitlabProject GitlabProject @relation(fields: [gitlabProjectId], references: [gitlabId])
+  id              String        @id
+  name            String
+  status          String
+  GitlabProject   GitlabProject @relation(fields: [gitlabProjectId], references: [gitlabId])
   gitlabProjectId Int
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
 }
-

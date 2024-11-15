@@ -1,5 +1,6 @@
 import { IRoute } from "../routes/IRoute";
 import LoginPage from "../pages/Login/Login";
+import Signup from "../pages/Signup/Signup";
 
 
 export const AuthRoutes: IRoute[] = [
@@ -8,4 +9,9 @@ export const AuthRoutes: IRoute[] = [
     component: LoginPage,
     name: "Login",
   },
+  {
+    path: "/auth/signup",
+    component: Signup,
+    name: "Signup",
+  }
 ]

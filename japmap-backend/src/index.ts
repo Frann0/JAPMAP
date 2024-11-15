@@ -1,11 +1,10 @@
 import { Elysia } from "elysia";
 import cors from "@elysiajs/cors";
 import { gitlab } from "../http-gitlab";
-import { buildMap, getAllMaps, getNomadInstances } from "./querys/querys";
+import { buildMap, getAllMaps, getNomadInstances, signUp } from "./querys/querys";
 
 const app = new Elysia()
   .use(cors())
-  .get("/", () => "Hello Elysia")
   .post("/test", async ({ body }) => {
     const { gitlabURL } = body;
     return buildMap(gitlabURL);
@@ -16,7 +15,11 @@ const app = new Elysia()
   }).get("/getMaps", async () => {
     return getAllMaps();
   })
-
+  .post("/signup", async ({ body }) => {
+    console.log(body);
+    await signUp(body);
+    return { message: "User signed up" };
+  })
   .listen(3000);
 
 console.log(
