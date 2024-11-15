@@ -13,6 +13,30 @@
     display: flex;
     flex-direction: column;
     padding: 30px;
+    &User{
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      width: 100%;
+      &Logout{
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+        cursor: pointer;
+        color: $secondaryColor;
+        transition: all $defaultTransitionTime ease-in-out;
+        width: 100%;
+        padding: 5px;
+        border-radius: 10px;
+        border: 1px solid transparent;
+        &:hover{
+          border: 1px solid $secondaryColor;
+          background: $secondary20;
+        }
+      }
+    }
     &Title{
       display: flex;
       align-items: center;
@@ -35,6 +59,9 @@
       flex-direction: column;
       padding: 20px 0;
       gap: 10px;
+      flex: 1 0 0;
+      overflow-y: auto;
+      overflow-x: hidden;
       &_Link{
         display: flex;
         align-items: center;
@@ -44,9 +71,14 @@
         color: $secondaryColor;
         cursor: pointer;
         transition: all $defaultTransitionTime ease-in-out;
+        padding: 5px;
+        border-radius: 10px;
+        border: 1px solid transparent;
         &:hover{
-          transform: scale(1.1);
+          border: 1px solid $secondaryColor;
+          background-color: $secondary20;
         }
+
       }
     }
   }

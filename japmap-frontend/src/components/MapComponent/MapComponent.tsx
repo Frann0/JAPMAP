@@ -9,7 +9,7 @@ import { useStore } from "../../stores/store";
 const MapComponent = ({ map }: { map: IMapComponent }) => {
   const { mapStore } = useStore();
   return (
-    <div
+    <div key={map.project.id}
       className={`MapComponent ${map.project.open ? "MapComponent_Open" : "MapComponent_Closed"}`}
     >
       <div
