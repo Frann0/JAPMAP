@@ -28,16 +28,17 @@ export class MapStore {
     }
   }
 
-  async addMapping(gitlabURL: string) {
-    await addMapping(gitlabURL).then((mapping) => {
+  async addMapping(gitlabURL: string, userId: string) {
+    await addMapping(gitlabURL, userId).then((mapping) => {
       const m = mapping as IMapComponent;
       m.project.open = false;
       this.pushMapping(m);
     });
   }
 
-  async fetchAllMappings() {
-    const mappings = await getAllMappings();
+  async fetchAllMappings(userId: string) {
+    console.log(userId);
+    const mappings = await getAllMappings(userId);
     this.setMappings(mappings);
   }
 

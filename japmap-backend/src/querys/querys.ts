@@ -67,38 +67,58 @@ const transformMap = (map) => {
   };
 };
 
-export const buildMap = async (gitlabUrl: string) => {
+export const buildMap = async (gitlabUrl: string, userId: string) => {
   const gitlabProject = await getGitlabProject(gitlabUrl);
   const prefix = await getGitlabVariable(gitlabProject.id, "JAPMAP_PREFIX");
   const instances = await getNomadInstances(prefix);
 
   //if the map already exists in the database, reutrn it instead of creating a new one
-  const existingMap = await prisma.gitlabProject.findUnique({
-    where: { gitlabId: gitlabProject.id },
+  const existingMap = await prisma.gitlabProject.findFirst({
+    where: {
+      gitlabId: gitlabProject.id,
+      Users: {
+        some: {
+          id: userId
+        }
+      }
+    },
     include: { nomadInstances: true },
   });
   if (existingMap) {
     return transformMap(existingMap);
   }
 
-  const m = addMap(gitlabProject, instances, prefix).then((res) => {
+  const m = addMap(gitlabProject, instances, prefix, userId).then((res) => {
     return transformMap(res);
   });
 
   return m;
 };
 
-export const getMap = async (gitlabProjectId) => {
+export const getMap = async (gitlabProjectId: number, userId: string) => {
   const map = await prisma.gitlabProject.findUnique({
-    where: { gitlabId: gitlabProjectId },
+    where: {
+      gitlabId: gitlabProjectId,
+      Users: {
+        some: {
+          id: userId
+        }
+      }
+    },
     include: { nomadInstances: true },
   });
   return transformMap(map);
 };
 
-export const addMap = async (gitlabProject, nomadInstances, nomadPrefix) => {
+export const addMap = async (gitlabProject, nomadInstances, nomadPrefix, userId) => {
+  console.log(userId)
   const newProject = await prisma.gitlabProject.create({
     data: {
+      Users: {
+        connect: {
+          id: userId
+        }
+      },
       gitlabId: gitlabProject.id,
       name: gitlabProject.name,
       nomadPrefix: nomadPrefix,
@@ -109,6 +129,8 @@ export const addMap = async (gitlabProject, nomadInstances, nomadPrefix) => {
       webUrl: gitlabProject.web_url,
     },
   });
+
+  console.log(newProject);
 
   const newInstances = nomadInstances.map(async (instance) => {
     const newNomadInstance = await prisma.nomadInstance
@@ -127,15 +149,29 @@ export const addMap = async (gitlabProject, nomadInstances, nomadPrefix) => {
   });
 
   const map = await prisma.gitlabProject.findUnique({
-    where: { gitlabId: newProject.gitlabId },
+    where: {
+      gitlabId: newProject.gitlabId,
+      Users: {
+        some: {
+          id: userId
+        }
+      }
+    },
     include: { nomadInstances: true },
   });
 
   return map;
 };
 
-export const getAllMaps = async () => {
+export const getAllMaps = async (userId: string) => {
   const maps = await prisma.gitlabProject.findMany({
+    where: {
+      Users: {
+        some: {
+          id: userId
+        }
+      }
+    },
     include: { nomadInstances: true },
   });
   return maps.map((map) => transformMap(map));

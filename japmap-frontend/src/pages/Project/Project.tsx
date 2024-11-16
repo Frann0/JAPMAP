@@ -8,14 +8,19 @@ import { observer } from "mobx-react-lite";
 import add_circle from '../../assets/icons/add_circle.svg'
 
 const ProjectPage: FC = () => {
-  const { mapStore } = useStore();
+  const { mapStore, authStore } = useStore();
   const [input, setInput] = useState("");
   const [showModal, setShowModal] = useState(false)
   const [loading, setLoading] = useState(false);
 
   const addProject = async () => {
+    console.log(authStore.user)
     setLoading(true);
-    await mapStore.fetchMapping(input).then(() => {
+    if (!authStore.user) {
+      return;
+    }
+
+    await mapStore.addMapping(input, authStore.user!.uid).then(() => {
       setInput("");
       setShowModal(false);
       setLoading(false);
@@ -23,8 +28,11 @@ const ProjectPage: FC = () => {
   };
 
   useEffect(() => {
-    mapStore.fetchAllMappings();
-  }, []);
+    if (!authStore.user) {
+      return;
+    }
+    mapStore.fetchAllMappings(authStore.user!.uid);
+  }, [authStore.user]);
 
   return (
     <>
@@ -37,8 +45,8 @@ const ProjectPage: FC = () => {
                 For at tilføje et projekt, udfyldes nedenstående input felt, med link til projektet på gitlab.
                 <br />
                 <br />
- For at kunne finde nomad instanserne for projektet, skal der laves en CI/CD variable med prefixet 
-                Nomad instanserne, ved navn JAPMAP_PREFIX. Hvis ikke den er der, vil processen fejle.
+                For at kunne finde nomad instanserne for projektet, skal der laves en CI/CD variable med prefixet
+                Nomad instanserne, ved navn JAPMAP_PREFIX. Hvis ikke den er der, vil processen fele.
               </p>
               <div className="Add_ModalContent_ContainerInput">
                 <input type="text" className="input" placeholder="Gitlab Link" onChange={(e) => setInput(e.target.value)} />
@@ -60,9 +68,9 @@ const ProjectPage: FC = () => {
         <div className="Project_Content">
           {mapStore.mappings.map((mapping: IMapComponent) => (
             <MapComponent map={mapping} />
-          ))}     
+          ))}
         </div>
-      </div >
+      </div>
     </>
   );
 };

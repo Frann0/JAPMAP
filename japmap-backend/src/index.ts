@@ -5,18 +5,16 @@ import { buildMap, getAllMaps, getNomadInstances, signUp } from "./querys/querys
 
 const app = new Elysia()
   .use(cors())
-  .post("/test", async ({ body }) => {
-    const { gitlabURL } = body;
-    return buildMap(gitlabURL);
-  })
-  .post("/test2", async ({ body }) => {
-    const { prefix } = body;
-    return getNomadInstances(prefix);
-  }).get("/getMaps", async () => {
-    return getAllMaps();
+  .post("/addMap", async ({ body }) => {
+    const { gitlabURL, userId } = body;
+    return buildMap(gitlabURL, userId);
+  }).get("/getMaps", async ({ query: { userId } }) => {
+    if (!userId) {
+      return { message: "No user id" };
+    }
+    return getAllMaps(userId);
   })
   .post("/signup", async ({ body }) => {
-    console.log(body);
     await signUp(body);
     return { message: "User signed up" };
   })
