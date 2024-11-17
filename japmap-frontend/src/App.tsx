@@ -7,6 +7,8 @@ import { AuthRoutes } from "./routes/authRoutes";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { useStore } from "./stores/store";
 import { observer } from "mobx-react-lite";
+import { useEffect } from "react";
+import { titleHelper } from "./helpers/titleHelper";
 
 function App() {
   const navigate = useNavigate();
@@ -23,6 +25,11 @@ function App() {
       authStore.setUser(user);
     }
   })
+
+  useEffect(() => {
+
+    document.title = "JapMap | " + titleHelper(location.pathname);
+  }, [location.pathname])
 
   return (
     <>

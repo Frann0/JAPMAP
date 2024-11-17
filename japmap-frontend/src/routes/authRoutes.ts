@@ -12,6 +12,6 @@ export const AuthRoutes: IRoute[] = [
   {
     path: "/auth/signup",
     component: Signup,
-    name: "Signup",
+    name: "Opret Bruger",
   }
 ]
