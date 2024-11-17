@@ -9,6 +9,5 @@ export interface IUserDTO {
 
 export const signUp = async (user: IUserDTO) => {
   const response = await http.post("/signup", user);
-  console.log(response);
   return response.data;
 }

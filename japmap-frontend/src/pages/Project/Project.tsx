@@ -46,7 +46,7 @@ const ProjectPage: FC = () => {
                 <br />
                 <br />
                 For at kunne finde nomad instanserne for projektet, skal der laves en CI/CD variable med prefixet
-                Nomad instanserne, ved navn JAPMAP_PREFIX. Hvis ikke den er der, vil processen fele.
+                Nomad instanserne, ved navn JAPMAP_PREFIX. Hvis ikke den er der, vil processen fejle.
               </p>
               <div className="Add_ModalContent_ContainerInput">
                 <input type="text" className="input" placeholder="Gitlab Link" onChange={(e) => setInput(e.target.value)} />

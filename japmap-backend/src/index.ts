@@ -1,9 +1,10 @@
 import { Elysia } from "elysia";
 import cors from "@elysiajs/cors";
 import { gitlab } from "../http-gitlab";
-import { buildMap, getAllMaps, getNomadInstances, signUp } from "./querys/querys";
+import { buildMap, checkForNewNomadInstances, getAllMaps, getNomadInstances, signUp, updateNomadInstancesStatus } from "./querys/querys";
 import { staticPlugin } from '@elysiajs/static'
 import generateAvatar from "github-like-avatar-generator";
+import cron from "@elysiajs/cron";
 
 const generateProfilePicture = async (userId: string) => {
   const avatar = generateAvatar({
@@ -23,6 +24,13 @@ const generateProfilePicture = async (userId: string) => {
 const app = new Elysia()
   .use(cors())
   .use(staticPlugin())
+  .use(cron({
+    name: "Check for new Nomad instances",
+    pattern: "* */1 * * * *",
+    async run() {
+      await updateNomadInstancesStatus()
+    }
+  }))
   .post("/addMap", async ({ body }) => {
     const { gitlabURL, userId } = body;
     return buildMap(gitlabURL, userId);
@@ -42,6 +50,10 @@ const app = new Elysia()
     const { userId } = body;
     generateProfilePicture(userId);
     return { message: "Profile picture generated" };
+  })
+  .post("/checkNomadInstances", async ({ body }) => {
+    const { gitlabProjectId, userId } = body;
+    return checkForNewNomadInstances(gitlabProjectId, userId);
   })
   .listen(3000);
 

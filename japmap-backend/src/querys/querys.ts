@@ -199,6 +199,10 @@ export const addMap = async (gitlabProject, nomadInstances, nomadPrefix, userId)
 };
 
 export const getAllMaps = async (userId: string) => {
+  await purgeNomadInstances(userId);
+
+  await checkForNewNomadInstances(userId);
+
   const maps = await prisma.gitlabProject.findMany({
     where: {
       Users: {
@@ -209,6 +213,8 @@ export const getAllMaps = async (userId: string) => {
     },
     include: { nomadInstances: true },
   });
+
+
   return maps.map((map) => transformMap(map));
 }
 
@@ -224,4 +230,112 @@ export const signUp = async (user) => {
   })
   console.log(u);
   return u;
-}  
+}
+
+export const checkForNewNomadInstances = async (userId: string) => {
+  const projects = await prisma.gitlabProject.findMany({
+    where: {
+      Users: {
+        some: {
+          id: userId
+        }
+      }
+    },
+    include: { nomadInstances: true },
+  });
+
+  for (const project of projects) {
+
+
+    const prefix = project.nomadPrefix;
+    const instances = await getNomadInstances(prefix);
+
+    //Filter out instances that already exist in the database
+    const newInstances = instances.filter((instance) => {
+      return !project.nomadInstances.some((oldInstance) => oldInstance.id === instance.ID);
+    });
+
+
+    //Add new instances to the database
+    const newInstancesDB = await Promise.all(
+      newInstances.map(async (instance) => {
+        const newNomadInstance = await prisma.nomadInstance
+          .create({
+            data: {
+              id: instance.ID,
+              name: instance.Name,
+              status: instance.Status,
+              gitlabProjectId: project.gitlabId,
+            },
+          })
+          .then((res) => {
+            return res;
+          });
+        return newNomadInstance;
+      })
+    );
+
+    //Update the project with the new instances
+    await prisma.gitlabProject.update({
+      where: {
+        gitlabId: project.gitlabId,
+      },
+      data: {
+        nomadInstances: {
+          connect: newInstancesDB,
+        },
+      },
+      include: { nomadInstances: true },
+    });
+  }
+}
+
+
+const purgeNomadInstances = async (userId: string) => {
+  //For all projects for the user, get all nomad instances and delete them if they do not exist on the list from the nomad API
+  const projects = await prisma.gitlabProject.findMany({
+    where: {
+      Users: {
+        some: {
+          id: userId
+        }
+      }
+    },
+    include: { nomadInstances: true },
+  });
+
+  for (const project of projects) {
+    const prefix = project.nomadPrefix;
+    const instances = await getNomadInstances(prefix);
+
+    const instancesToDelete = project.nomadInstances.filter((instance) => {
+      return !instances.some((newInstance) => instance.id === newInstance.ID);
+    });
+
+    await prisma.nomadInstance.deleteMany({
+      where: {
+        id: {
+          in: instancesToDelete.map((instance) => instance.id),
+        },
+      },
+    });
+  }
+}
+
+export const updateNomadInstancesStatus = async () => {
+  const instances = await prisma.nomadInstance.findMany();
+
+  for (const instance of instances) {
+    const nomadResponse = await nomad.get(`/job/${instance.id}`);
+    const status = nomadResponse.data.Status;
+    await prisma.nomadInstance.update({
+      where: {
+        id: instance.id,
+      },
+      data: {
+        status: status,
+      },
+    });
+  }
+}
+

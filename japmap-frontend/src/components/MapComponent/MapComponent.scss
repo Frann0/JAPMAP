@@ -87,9 +87,21 @@
     flex-direction: column;
     gap: 15px;
     border-radius: 5px 0 0 0;
-    border-left: 1px solid $decorationBorder;
     border-top: 1px solid $decorationBorder;
     flex: 1;
     padding-top: 15px;
+    position: relative;
+    &::before{
+      content: '';
+      position: absolute;
+      //Border radius of the top left corner, should be accounted for, so we offset the top by 5px / 2
+      top: calc(5px / 2); 
+      left: 0;
+      width: 1px;
+      //The last nomad element has a before pseudo element which is 11px tall
+      //the whole nomad element is 40px tall, so we need to offset the height by 11px which is 29px
+      height: calc(100% - 29px);
+      background-color: $decorationBorder;
+    }
   }
 }
