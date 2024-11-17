@@ -5,13 +5,11 @@ import "./default_layout.scss";
 import { useStore } from "../stores/store";
 import { observer } from "mobx-react-lite";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
+import User from "../components/User/User";
 
 const Default_Layout = () => {
   const { authStore } = useStore();
   const navigate = useNavigate();
-  const [displayName, setDisplayName] = useState<string>(authStore.user?.displayName! || '');
-  const auth = getAuth();
-
 
   const handleLogout = async () => {
     authStore.logout().then(() => {
@@ -33,7 +31,7 @@ const Default_Layout = () => {
               ))}
           </div>
           <div className="Default_SidebarUser">
-            <p>{displayName}</p>
+            <User />
             <div onClick={() => handleLogout()} className="Default_SidebarUserLogout">Logout</div>
           </div>
         </div>

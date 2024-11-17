@@ -1,8 +1,9 @@
 import { observer } from "mobx-react-lite"
 import { useStore } from "../../stores/store";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import './Signup.scss'
+import { getAuth } from "firebase/auth";
 
 
 const SignUp = () => {
@@ -13,14 +14,20 @@ const SignUp = () => {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [error, setError] = useState('');
+  const navigate = useNavigate();
+  const auth = getAuth();
 
-  const handleSignUp = () => {
+  const handleSignUp = async () => {
 
     if (password !== confirmPassword) {
       setError('Passwords er ikke ens');
       return;
     }
-    authStore.signup(email, password, firstName, lastName);
+    await authStore.signup(email, password, firstName, lastName).then(() => {
+      setError('');
+      authStore.setUser(auth.currentUser);
+      navigate('/projekter')
+    })
   }
 
   return (

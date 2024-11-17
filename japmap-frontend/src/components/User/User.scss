@@ -1,0 +1,57 @@
+@import '../../assets/variables.scss';
+
+.User{
+  display: flex;
+  flex-direction: row;
+  padding: 10px;
+  border: 1px solid transparent;
+  transition: all $defaultTransitionTime ease-in-out;
+  border-radius: 10px;
+  gap: 10px;
+  cursor: pointer;
+  align-items: center;
+
+  &:hover{
+    background-color: $secondary20;
+    border-color: $secondaryColor;
+  }
+
+ &_Image{
+    aspect-ratio: 1/1;
+    width: 30px;
+    border-radius: 50%;
+
+    object-fit: cover;
+
+  } 
+  &_Info{
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-width: 0;
+    justify-content: center;
+    user-select: none;
+
+    p{
+      overflow-x: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    &_DisplayName{
+      font-weight: bold;
+      color: $accentColor;
+      font-size: 14px;
+    overflow-x: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    }
+    &_Email{
+      font-size: 12px;
+      color: $secondaryColor;
+    overflow-x: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    }
+  }
+}

@@ -15,14 +15,12 @@ function App() {
 
   const auth = getAuth();
   onAuthStateChanged(auth, (user) => {
+    console.log(user)
     if (user) {
-      if (location.pathname === '/auth/login' || location.pathname === '/auth/signup') {
+      if (location.pathname === '/auth/login') {
         navigate('/projekter');
       }
-
-      if (authStore.user === null) {
-        authStore.setUser(user);
-      }
+      authStore.setUser(user);
     }
   })
 

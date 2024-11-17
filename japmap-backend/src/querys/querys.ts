@@ -112,6 +112,41 @@ export const getMap = async (gitlabProjectId: number, userId: string) => {
 
 export const addMap = async (gitlabProject, nomadInstances, nomadPrefix, userId) => {
   console.log(userId)
+
+  const existingProject = await prisma.gitlabProject.findFirst({
+    where: {
+      gitlabId: gitlabProject.id,
+    },
+  });
+
+  if (existingProject) {
+    const user = await prisma.user.findUnique({
+      where: {
+        id: userId
+      }
+    });
+
+    if (!user) {
+      return;
+    }
+
+    const newProject = await prisma.gitlabProject.update({
+      where: {
+        gitlabId: gitlabProject.id,
+      },
+      data: {
+        Users: {
+          connect: {
+            id: userId
+          }
+        }
+      },
+      include: { nomadInstances: true },
+    });
+
+    return newProject;
+  }
+
   const newProject = await prisma.gitlabProject.create({
     data: {
       Users: {
