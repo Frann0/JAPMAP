@@ -26,7 +26,7 @@ const app = new Elysia()
   .use(staticPlugin())
   .use(cron({
     name: "Check for new Nomad instances",
-    pattern: "* */1 * * * *",
+    pattern: "*/1 * * * *",
     async run() {
       await updateNomadInstancesStatus()
     }
