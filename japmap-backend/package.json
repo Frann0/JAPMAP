@@ -6,7 +6,8 @@
     "dev": "bun run --watch src/index.ts",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
-    "prisma:dev": "bun run prisma:generate && bun run prisma:migrate"
+    "prisma:dev": "bun run prisma:generate && bun run prisma:migrate",
+    "prisma:reset": "prisma migrate reset --force"
   },
   "dependencies": {
     "@elysiajs/cors": "^1.1.1",

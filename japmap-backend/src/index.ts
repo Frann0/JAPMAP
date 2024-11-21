@@ -31,9 +31,15 @@ const app = new Elysia()
       await updateNomadInstancesStatus()
     }
   }))
-  .post("/addMap", async ({ body }) => {
+  .post("/addMap", async ({ body, headers }) => {
     const { gitlabURL, userId } = body;
-    return buildMap(gitlabURL, userId);
+    const gitlabToken = headers["x-gitlab-token"];
+    const nomadToken = headers["x-nomad-token"];
+    if (!gitlabToken || !nomadToken) {
+      return { message: "No tokens provided" };
+    }
+
+    return buildMap(gitlabURL, userId, gitlabToken, nomadToken);
   }).get("/getMaps", async ({ query: { userId } }) => {
     if (!userId) {
       return { message: "No user id" };
@@ -45,17 +51,7 @@ const app = new Elysia()
     await generateProfilePicture(body.localId);
     //TODO: Update localhost in production
     return { message: "User signed up", profilePicture: `http://localhost:3000/public/profilePictures/${body.localId}.svg` };
-  })
-  .post("/generateProfilePicture", async ({ body }) => {
-    const { userId } = body;
-    generateProfilePicture(userId);
-    return { message: "Profile picture generated" };
-  })
-  .post("/checkNomadInstances", async ({ body }) => {
-    const { gitlabProjectId, userId } = body;
-    return checkForNewNomadInstances(gitlabProjectId, userId);
-  })
-  .listen(3000);
+  }).listen(3000);
 
 console.log(
   `🦊 Elysia is running at ${app.server?.hostname}:${app.server?.port}`,

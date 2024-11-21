@@ -4,10 +4,14 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-export const getGitlabProject = async (gitlabUrl: string) => {
+export const getGitlabProject = async (gitlabUrl: string, gitlabToken: string) => {
   const strippedURL = gitlabUrl.replace("https://gitlab.com/", "");
   const encodedURL = encodeURIComponent(strippedURL);
-  const gitlabResponse = await gitlab.get(`/projects/${encodedURL}`);
+  const gitlabResponse = await gitlab.get(`/projects/${encodedURL}`, {
+    headers: {
+      "PRIVATE-TOKEN": gitlabToken
+    }
+  });
 
   return gitlabResponse.data;
 };
@@ -15,9 +19,15 @@ export const getGitlabProject = async (gitlabUrl: string) => {
 export const getGitlabVariable = async (
   projectId: string,
   variableKey: string,
+  gitlabToken: string
 ) => {
   const gitlabResponse = await gitlab.get(
     `/projects/${projectId}/variables/${variableKey}`,
+    {
+      headers: {
+        "PRIVATE-TOKEN": gitlabToken
+      }
+    }
   );
   const { value } = gitlabResponse.data;
   return value;
@@ -67,9 +77,9 @@ const transformMap = (map) => {
   };
 };
 
-export const buildMap = async (gitlabUrl: string, userId: string) => {
-  const gitlabProject = await getGitlabProject(gitlabUrl);
-  const prefix = await getGitlabVariable(gitlabProject.id, "JAPMAP_PREFIX");
+export const buildMap = async (gitlabUrl: string, userId: string, gitlabToken: string, nomadToken: string) => {
+  const gitlabProject = await getGitlabProject(gitlabUrl, gitlabToken);
+  const prefix = await getGitlabVariable(gitlabProject.id, "JAPMAP_PREFIX", gitlabToken);
   const instances = await getNomadInstances(prefix);
 
   //if the map already exists in the database, reutrn it instead of creating a new one
@@ -110,8 +120,7 @@ export const getMap = async (gitlabProjectId: number, userId: string) => {
   return transformMap(map);
 };
 
-export const addMap = async (gitlabProject, nomadInstances, nomadPrefix, userId) => {
-  console.log(userId)
+export const addMap = async (gitlabProject, nomadInstances, nomadPrefix: string, userId: string) => {
 
   const existingProject = await prisma.gitlabProject.findFirst({
     where: {
@@ -164,8 +173,6 @@ export const addMap = async (gitlabProject, nomadInstances, nomadPrefix, userId)
       webUrl: gitlabProject.web_url,
     },
   });
-
-  console.log(newProject);
 
   const newInstances = nomadInstances.map(async (instance) => {
     const newNomadInstance = await prisma.nomadInstance
