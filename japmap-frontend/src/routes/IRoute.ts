@@ -5,4 +5,5 @@ export interface IRoute {
   component: React.FC;
   name: string;
   icon?: string;
+  internal?: boolean;
 }

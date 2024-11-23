@@ -9,6 +9,7 @@ import { useStore } from "./stores/store";
 import { observer } from "mobx-react-lite";
 import { useEffect } from "react";
 import { titleHelper } from "./helpers/titleHelper";
+import { Toaster } from "react-hot-toast";
 
 function App() {
   const navigate = useNavigate();
@@ -33,6 +34,7 @@ function App() {
 
   return (
     <>
+      <Toaster />
       <Routes>
         <Route path="/" element={<Default_Layout />}>
           {DefaultRoutes.map((route) => (
@@ -52,7 +54,7 @@ function App() {
             />
           ))}
         </Route>
-      </Routes>
+      </Routes >
     </>
   );
 }

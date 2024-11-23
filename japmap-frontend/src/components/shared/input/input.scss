@@ -1,0 +1,39 @@
+@import '../../../assets/variables.scss';
+
+
+.Input{ 
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex: 1;
+  max-height: fit-content;
+  &_Container{
+    border-radius: 10px;
+    border: 1px solid $decorationBorder;
+    display:flex;
+    flex-direction: row;
+    background: $primary5;
+    min-height: 30px;
+    padding: 0px 10px;
+    .input{
+      background: transparent;
+      flex: 1;
+      outline: none;
+      border: none;
+      color: $textColor;
+
+      &:disabled{
+        color: $decorationBorder;
+        cursor: not-allowed;
+      }
+    }
+  }
+
+  &_Label{
+    font-size: 12px;
+    color: $primaryColor;
+    margin: 0;
+    padding: 0;
+  }
+}
+

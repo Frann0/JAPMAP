@@ -4,6 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import './Signup.scss'
 import { getAuth } from "firebase/auth";
+import Input from "../../components/shared/input/input";
 
 
 const SignUp = () => {
@@ -39,21 +40,11 @@ const SignUp = () => {
         <p className="Signup_ErrorText">{error}</p>
       </div>
       <div className='Signup_Form'>
-        <div className='Signup_Form_InputContainer'>
-          <input className='input' type="text" placeholder='Fornavn' onChange={(e) => setFirstName(e.target.value)} />
-        </div>
-        <div className='Signup_Form_InputContainer'>
-          <input className='input' type="text" placeholder='Efternavn' onChange={(e) => setLastName(e.target.value)} />
-        </div>
-        <div className='Signup_Form_InputContainer'>
-          <input className='input' type="text" placeholder='Email' onChange={(e) => setEmail(e.target.value)} />
-        </div>
-        <div className='Signup_Form_InputContainer'>
-          <input className='input' type="password" placeholder='Password' onChange={(e) => setPassword(e.target.value)} />
-        </div>
-        <div className='Signup_Form_InputContainer'>
-          <input className='input' type="password" placeholder='Bekræft Password' onChange={(e) => setConfirmPassword(e.target.value)} />
-        </div>
+        <Input label="Fornavn" placeholder="Fornavn" onChange={(e) => setFirstName(e.target.value)} />
+        <Input label="Efternavn" placeholder="Efternavn" onChange={(e) => setLastName(e.target.value)} />
+        <Input label="Email" placeholder="Email" onChange={(e) => setEmail(e.target.value)} />
+        <Input label="Password" placeholder="Password" onChange={(e) => setPassword(e.target.value)} type="password" />
+        <Input label="Bekræft Password" placeholder="Bekræft Password" onChange={(e) => setConfirmPassword(e.target.value)} type="password" />
         <button className='Signup_Form_Button' onClick={() => handleSignUp()}>Opret</button>
       </div>
       <div className='Signup_Signup'>

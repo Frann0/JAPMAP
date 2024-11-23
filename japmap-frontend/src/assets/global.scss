@@ -55,6 +55,15 @@ h4 {
   animation: spin 1s linear infinite;
 }
 
+.Spinner_Primary {
+  border: 2px solid rgba(0, 0, 0, 0);
+  border-top: 2px solid $primaryColor;
+  border-radius: 50%;
+  width:16px;
+  height: 16px;
+  animation: spin 1s linear infinite;
+}
+
 @keyframes spin {
 0% {
   transform: rotate(0deg);

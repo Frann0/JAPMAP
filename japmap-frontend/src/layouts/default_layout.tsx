@@ -7,6 +7,7 @@ import { observer } from "mobx-react-lite";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import User from "../components/User/User";
 import Title from "../components/shared/Title/Title";
+import Input from "../components/shared/input/input";
 
 const Default_Layout = () => {
   const { authStore } = useStore();
@@ -47,14 +48,8 @@ const Default_Layout = () => {
                 <br />
                 Disse tokens vil blive gemt i localstorage og bruges til at hente data fra de respektive services.
               </p>
-              <label htmlFor="gitlab">Gitlab Token</label>
-              <div className="Add_ModalContent_ContainerInput">
-                <input type="text" className="input" placeholder="Gitlab Token" onChange={(e) => setGitlabToken(e.target.value)} />
-              </div>
-              <label htmlFor="nomad">Nomad Token</label>
-              <div className="Add_ModalContent_ContainerInput">
-                <input type="text" className="input" placeholder="Nomad Token" onChange={(e) => setNomadToken(e.target.value)} />
-              </div>
+              <Input label="Gitlab Token" placeholder="Gitlab Token" onChange={(e) => setGitlabToken(e.target.value)} />
+              <Input label="Nomad Token" placeholder="Nomad Token" onChange={(e) => setNomadToken(e.target.value)} />
             </div>
             <div className="Add_ModalContent_Buttons">
               <button className="button confirm" disabled={gitlabToken === "" && nomadToken === ""} onClick={() => setTokens()}>Bekræft</button>
@@ -68,9 +63,14 @@ const Default_Layout = () => {
           <div className="Default_SidebarLinks">
             {
               DefaultRoutes.map((route) => (
-                <Link to={route.path} key={route.path} className="Default_SidebarLinks_Link">
-                  {route.name}
-                </Link>
+                <>
+                  {!route.internal ?
+                    <Link to={route.path} key={route.path} className="Default_SidebarLinks_Link">
+                      {route.name}
+                    </Link>
+                    : null
+                  }
+                </>
               ))}
           </div>
           <div className="Default_SidebarUser">

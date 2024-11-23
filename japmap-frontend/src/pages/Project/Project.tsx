@@ -6,6 +6,7 @@ import MapComponent from "../../components/MapComponent/MapComponent";
 import Title from "../../components/shared/Title/Title";
 import { observer } from "mobx-react-lite";
 import add_circle from '../../assets/icons/add_circle.svg'
+import Input from "../../components/shared/input/input";
 
 const ProjectPage: FC = () => {
   const { mapStore, authStore } = useStore();
@@ -48,9 +49,7 @@ const ProjectPage: FC = () => {
                 For at kunne finde nomad instanserne for projektet, skal der laves en CI/CD variable med prefixet
                 Nomad instanserne, ved navn JAPMAP_PREFIX. Hvis ikke den er der, vil processen fejle.
               </p>
-              <div className="Add_ModalContent_ContainerInput">
-                <input type="text" className="input" placeholder="Gitlab Link" onChange={(e) => setInput(e.target.value)} />
-              </div>
+              <Input label="Gitlab link til projekt" placeholder="Gitlab Link" onChange={(e) => setInput(e.target.value)} />
             </div>
             <div className="Add_ModalContent_Buttons">
               <button className="button cancel" onClick={() => setShowModal(false)}>Annuller</button>

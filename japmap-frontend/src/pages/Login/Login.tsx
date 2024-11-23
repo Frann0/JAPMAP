@@ -3,6 +3,7 @@ import './Login.scss';
 import { observer } from 'mobx-react-lite';
 import { useStore } from '../../stores/store';
 import { useEffect, useState } from 'react';
+import Input from '../../components/shared/input/input';
 
 
 const LoginPage = () => {
@@ -28,12 +29,8 @@ const LoginPage = () => {
         <p className='LoginPage_TitleText'>Login</p>
       </div>
       <div className='LoginPage_Form'>
-        <div className='LoginPage_Form_InputContainer'>
-          <input className='input' type="text" placeholder='Email' onChange={(e) => setEmail(e.target.value)} />
-        </div>
-        <div className='LoginPage_Form_InputContainer'>
-          <input className='input' type="password" placeholder='Password' onChange={(e) => setPassword(e.target.value)} />
-        </div>
+        <Input label="Email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} />
+        <Input label="Password" type='password' placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} />
         <button className='LoginPage_Form_Button' onClick={() => handleLogin()}>Login</button>
       </div>
       <div className='LoginPage_Signup'>

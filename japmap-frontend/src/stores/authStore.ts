@@ -1,5 +1,5 @@
 import { makeAutoObservable } from "mobx";
-import { createUserWithEmailAndPassword, getAuth, signInWithEmailAndPassword, signOut, updateProfile } from "firebase/auth";
+import { createUserWithEmailAndPassword, getAuth, signInWithEmailAndPassword, signOut, updateEmail, updateProfile } from "firebase/auth";
 import { initializeApp } from "firebase/app";
 import { signUp } from "../services/authService";
 const firebaseConfig = {
@@ -47,6 +47,14 @@ export class AuthStore {
     });
   }
 
+  async updateProfile(displayName: string, photoURL: string) {
+    await updateProfile(auth.currentUser!, {
+      displayName: displayName,
+      photoURL: photoURL
+    })
+
+    this.setUser(auth.currentUser);
+  }
 
   constructor() {
     makeAutoObservable(this);
