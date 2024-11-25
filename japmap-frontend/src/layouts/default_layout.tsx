@@ -48,8 +48,8 @@ const Default_Layout = () => {
                 <br />
                 Disse tokens vil blive gemt i localstorage og bruges til at hente data fra de respektive services.
               </p>
-              <Input label="Gitlab Token" placeholder="Gitlab Token" onChange={(e) => setGitlabToken(e.target.value)} />
-              <Input label="Nomad Token" placeholder="Nomad Token" onChange={(e) => setNomadToken(e.target.value)} />
+              <Input label="Gitlab Token" value={gitlabToken} placeholder="Gitlab Token" onChange={(e) => setGitlabToken(e.target.value)} />
+              <Input label="Nomad Token" value={nomadToken} placeholder="Nomad Token" onChange={(e) => setNomadToken(e.target.value)} />
             </div>
             <div className="Add_ModalContent_Buttons">
               <button className="button confirm" disabled={gitlabToken === "" && nomadToken === ""} onClick={() => setTokens()}>Bekræft</button>
@@ -59,7 +59,7 @@ const Default_Layout = () => {
       )}
       <div className="Default">
         <div className="Default_Sidebar">
-          <p className="Logo">JAPMAP</p>
+          <Link to={"/projekter"} className="Logo">JAPMAP</Link>
           <div className="Default_SidebarLinks">
             {
               DefaultRoutes.map((route) => (

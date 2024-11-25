@@ -102,6 +102,8 @@ h4 {
   justify-content: center;
   align-items: center;
   background: $titleDivider;
+  backdrop-filter: blur(2px);
+  z-index: 1000;
 
   &Content{
     max-width: 800px;

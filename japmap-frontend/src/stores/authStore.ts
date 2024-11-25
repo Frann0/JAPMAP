@@ -38,6 +38,9 @@ export class AuthStore {
       photoURL: profilePicture
     })
 
+    //clear localstorage tokens if they exist
+    localStorage.removeItem("X-Nomad-Token");
+    localStorage.removeItem("X-Gitlab-Token");
 
     this.setUser(auth.currentUser);
   }

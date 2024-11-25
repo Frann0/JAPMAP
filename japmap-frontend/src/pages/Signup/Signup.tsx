@@ -40,11 +40,11 @@ const SignUp = () => {
         <p className="Signup_ErrorText">{error}</p>
       </div>
       <div className='Signup_Form'>
-        <Input label="Fornavn" placeholder="Fornavn" onChange={(e) => setFirstName(e.target.value)} />
-        <Input label="Efternavn" placeholder="Efternavn" onChange={(e) => setLastName(e.target.value)} />
-        <Input label="Email" placeholder="Email" onChange={(e) => setEmail(e.target.value)} />
-        <Input label="Password" placeholder="Password" onChange={(e) => setPassword(e.target.value)} type="password" />
-        <Input label="Bekræft Password" placeholder="Bekræft Password" onChange={(e) => setConfirmPassword(e.target.value)} type="password" />
+        <Input label="Fornavn" value={firstName} placeholder="Fornavn" onChange={(e) => setFirstName(e.target.value)} />
+        <Input label="Efternavn" value={lastName} placeholder="Efternavn" onChange={(e) => setLastName(e.target.value)} />
+        <Input label="Email" value={email} placeholder="Email" onChange={(e) => setEmail(e.target.value)} />
+        <Input label="Password" value={password} placeholder="Password" onChange={(e) => setPassword(e.target.value)} type="password" />
+        <Input label="Bekræft Password" value={confirmPassword} placeholder="Bekræft Password" onChange={(e) => setConfirmPassword(e.target.value)} type="password" />
         <button className='Signup_Form_Button' onClick={() => handleSignUp()}>Opret</button>
       </div>
       <div className='Signup_Signup'>

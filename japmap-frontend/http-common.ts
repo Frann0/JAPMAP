@@ -1,10 +1,16 @@
 import axios from "axios";
 
-export default axios.create({
+const axiosIntance = axios.create({
   baseURL: `${import.meta.env.VITE_API_BASEURL}`,
   headers: {
     "Content-type": "application/json",
-    "X-Nomad-Token": `${localStorage.getItem("X-Nomad-Token")}`,
-    "X-Gitlab-Token": `${localStorage.getItem("X-Gitlab-Token")}`
   },
 });
+
+axiosIntance.interceptors.request.use(async (config) => {
+  config.headers["X-Nomad-Token"] = `${localStorage.getItem("X-Nomad-Token")}`;
+  config.headers["X-Gitlab-Token"] = `${localStorage.getItem("X-Gitlab-Token")}`;
+  return config;
+});
+
+export default axiosIntance;
