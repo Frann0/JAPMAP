@@ -4,13 +4,16 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-export const getGitlabProject = async (gitlabUrl: string, gitlabToken: string) => {
+export const getGitlabProject = async (
+  gitlabUrl: string,
+  gitlabToken: string,
+) => {
   const strippedURL = gitlabUrl.replace("https://gitlab.com/", "");
   const encodedURL = encodeURIComponent(strippedURL);
   const gitlabResponse = await gitlab.get(`/projects/${encodedURL}`, {
     headers: {
-      "PRIVATE-TOKEN": gitlabToken
-    }
+      "PRIVATE-TOKEN": gitlabToken,
+    },
   });
 
   return gitlabResponse.data;
@@ -19,22 +22,26 @@ export const getGitlabProject = async (gitlabUrl: string, gitlabToken: string) =
 export const getGitlabVariable = async (
   projectId: string,
   variableKey: string,
-  gitlabToken: string
+  gitlabToken: string,
 ) => {
   const gitlabResponse = await gitlab.get(
     `/projects/${projectId}/variables/${variableKey}`,
     {
       headers: {
-        "PRIVATE-TOKEN": gitlabToken
-      }
-    }
+        "PRIVATE-TOKEN": gitlabToken,
+      },
+    },
   );
   const { value } = gitlabResponse.data;
   return value;
 };
 
-export const getNomadInstances = async (prefix: string) => {
-  const nomadResponse = await nomad.get(`/jobs?namespace=*&prefix=${prefix}`);
+export const getNomadInstances = async (prefix: string, nomadToken: string) => {
+  const nomadResponse = await nomad.get(`/jobs?namespace=*&prefix=${prefix}`, {
+    headers: {
+      "X-Nomad-Token": nomadToken,
+    },
+  });
   return filterNomadInstances(nomadResponse.data);
 };
 
@@ -77,10 +84,19 @@ const transformMap = (map) => {
   };
 };
 
-export const buildMap = async (gitlabUrl: string, userId: string, gitlabToken: string, nomadToken: string) => {
+export const buildMap = async (
+  gitlabUrl: string,
+  userId: string,
+  gitlabToken: string,
+  nomadToken: string,
+) => {
   const gitlabProject = await getGitlabProject(gitlabUrl, gitlabToken);
-  const prefix = await getGitlabVariable(gitlabProject.id, "JAPMAP_PREFIX", gitlabToken);
-  const instances = await getNomadInstances(prefix);
+  const prefix = await getGitlabVariable(
+    gitlabProject.id,
+    "JAPMAP_PREFIX",
+    gitlabToken,
+  );
+  const instances = await getNomadInstances(prefix, nomadToken);
 
   //if the map already exists in the database, reutrn it instead of creating a new one
   const existingMap = await prisma.gitlabProject.findFirst({
@@ -88,9 +104,9 @@ export const buildMap = async (gitlabUrl: string, userId: string, gitlabToken: s
       gitlabId: gitlabProject.id,
       Users: {
         some: {
-          id: userId
-        }
-      }
+          id: userId,
+        },
+      },
     },
     include: { nomadInstances: true },
   });
@@ -111,17 +127,21 @@ export const getMap = async (gitlabProjectId: number, userId: string) => {
       gitlabId: gitlabProjectId,
       Users: {
         some: {
-          id: userId
-        }
-      }
+          id: userId,
+        },
+      },
     },
     include: { nomadInstances: true },
   });
   return transformMap(map);
 };
 
-export const addMap = async (gitlabProject, nomadInstances, nomadPrefix: string, userId: string) => {
-
+export const addMap = async (
+  gitlabProject,
+  nomadInstances,
+  nomadPrefix: string,
+  userId: string,
+) => {
   const existingProject = await prisma.gitlabProject.findFirst({
     where: {
       gitlabId: gitlabProject.id,
@@ -131,8 +151,8 @@ export const addMap = async (gitlabProject, nomadInstances, nomadPrefix: string,
   if (existingProject) {
     const user = await prisma.user.findUnique({
       where: {
-        id: userId
-      }
+        id: userId,
+      },
     });
 
     if (!user) {
@@ -146,9 +166,9 @@ export const addMap = async (gitlabProject, nomadInstances, nomadPrefix: string,
       data: {
         Users: {
           connect: {
-            id: userId
-          }
-        }
+            id: userId,
+          },
+        },
       },
       include: { nomadInstances: true },
     });
@@ -160,8 +180,8 @@ export const addMap = async (gitlabProject, nomadInstances, nomadPrefix: string,
     data: {
       Users: {
         connect: {
-          id: userId
-        }
+          id: userId,
+        },
       },
       gitlabId: gitlabProject.id,
       name: gitlabProject.name,
@@ -195,9 +215,9 @@ export const addMap = async (gitlabProject, nomadInstances, nomadPrefix: string,
       gitlabId: newProject.gitlabId,
       Users: {
         some: {
-          id: userId
-        }
-      }
+          id: userId,
+        },
+      },
     },
     include: { nomadInstances: true },
   });
@@ -214,17 +234,15 @@ export const getAllMaps = async (userId: string) => {
     where: {
       Users: {
         some: {
-          id: userId
-        }
-      }
+          id: userId,
+        },
+      },
     },
     include: { nomadInstances: true },
   });
 
-
   return maps.map((map) => transformMap(map));
-}
-
+};
 
 export const signUp = async (user) => {
   const u = await prisma.user.create({
@@ -232,36 +250,38 @@ export const signUp = async (user) => {
       displayName: user.displayName,
       email: user.email,
       id: user.localId,
-      emailVerified: user.emailVerified
-    }
-  })
+      emailVerified: user.emailVerified,
+    },
+  });
   console.log(u);
   return u;
-}
+};
 
-export const checkForNewNomadInstances = async (userId: string) => {
+export const checkForNewNomadInstances = async (
+  userId: string,
+  nomadToken: string,
+) => {
   const projects = await prisma.gitlabProject.findMany({
     where: {
       Users: {
         some: {
-          id: userId
-        }
-      }
+          id: userId,
+        },
+      },
     },
     include: { nomadInstances: true },
   });
 
   for (const project of projects) {
-
-
     const prefix = project.nomadPrefix;
-    const instances = await getNomadInstances(prefix);
+    const instances = await getNomadInstances(prefix, nomadToken);
 
     //Filter out instances that already exist in the database
     const newInstances = instances.filter((instance) => {
-      return !project.nomadInstances.some((oldInstance) => oldInstance.id === instance.ID);
+      return !project.nomadInstances.some(
+        (oldInstance) => oldInstance.id === instance.ID,
+      );
     });
-
 
     //Add new instances to the database
     const newInstancesDB = await Promise.all(
@@ -279,7 +299,7 @@ export const checkForNewNomadInstances = async (userId: string) => {
             return res;
           });
         return newNomadInstance;
-      })
+      }),
     );
 
     //Update the project with the new instances
@@ -295,25 +315,24 @@ export const checkForNewNomadInstances = async (userId: string) => {
       include: { nomadInstances: true },
     });
   }
-}
+};
 
-
-const purgeNomadInstances = async (userId: string) => {
+const purgeNomadInstances = async (userId: string, nomadToken: string) => {
   //For all projects for the user, get all nomad instances and delete them if they do not exist on the list from the nomad API
   const projects = await prisma.gitlabProject.findMany({
     where: {
       Users: {
         some: {
-          id: userId
-        }
-      }
+          id: userId,
+        },
+      },
     },
     include: { nomadInstances: true },
   });
 
   for (const project of projects) {
     const prefix = project.nomadPrefix;
-    const instances = await getNomadInstances(prefix);
+    const instances = await getNomadInstances(prefix, nomadToken);
 
     const instancesToDelete = project.nomadInstances.filter((instance) => {
       return !instances.some((newInstance) => instance.id === newInstance.ID);
@@ -327,13 +346,17 @@ const purgeNomadInstances = async (userId: string) => {
       },
     });
   }
-}
+};
 
-export const updateNomadInstancesStatus = async () => {
+export const updateNomadInstancesStatus = async (nomadToken: string) => {
   const instances = await prisma.nomadInstance.findMany();
 
   for (const instance of instances) {
-    const nomadResponse = await nomad.get(`/job/${instance.id}`);
+    const nomadResponse = await nomad.get(`/job/${instance.id}`, {
+      headers: {
+        "X-Nomad-Token": nomadToken,
+      },
+    });
     const status = nomadResponse.data.Status;
     await prisma.nomadInstance.update({
       where: {
@@ -344,5 +367,4 @@ export const updateNomadInstancesStatus = async () => {
       },
     });
   }
-}
-
+};
