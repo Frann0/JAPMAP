@@ -5,17 +5,17 @@ import { IMapComponent } from "../../interfaces/IMapComponent";
 import MapComponent from "../../components/MapComponent/MapComponent";
 import Title from "../../components/shared/Title/Title";
 import { observer } from "mobx-react-lite";
-import add_circle from '../../assets/icons/add_circle.svg'
+import add_circle from "../../assets/icons/add_circle.svg";
 import Input from "../../components/shared/input/input";
 
 const ProjectPage: FC = () => {
   const { mapStore, authStore } = useStore();
   const [input, setInput] = useState("");
-  const [showModal, setShowModal] = useState(false)
+  const [showModal, setShowModal] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const addProject = async () => {
-    console.log(authStore.user)
+    console.log(authStore.user);
     setLoading(true);
     if (!authStore.user) {
       return;
@@ -29,31 +29,62 @@ const ProjectPage: FC = () => {
   };
 
   useEffect(() => {
+    fetchProjects();
+  }, [authStore.user]);
+
+  const fetchProjects = async () => {
     if (!authStore.user) {
       return;
     }
-    mapStore.fetchAllMappings(authStore.user!.uid);
-  }, [authStore.user]);
+
+    await mapStore.fetchAllMappings(authStore.user!.uid);
+  };
+
+  // const t = setTimeout(() => {
+  //  fetchProjects();
+  //  console.log("aaaaa");
+  //}, 1000);
+
+  useEffect(() => {
+    // return clearTimeout(t);
+  }, []);
 
   return (
     <>
       {showModal && (
         <div className="Add_Modal" onClick={() => setShowModal(false)}>
-          <div className="Add_ModalContent" onClick={(e) => e.stopPropagation()}>
+          <div
+            className="Add_ModalContent"
+            onClick={(e) => e.stopPropagation()}
+          >
             <Title title="Tilføj Projekt" />
             <div className="Add_ModalContent_Container">
               <p className="Add_ModalContent_ContainerText">
-                For at tilføje et projekt, udfyldes nedenstående input felt, med link til projektet på gitlab.
+                For at tilføje et projekt, udfyldes nedenstående input felt, med
+                link til projektet på gitlab.
                 <br />
                 <br />
-                For at kunne finde nomad instanserne for projektet, skal der laves en CI/CD variable med prefixet
-                Nomad instanserne, ved navn JAPMAP_PREFIX. Hvis ikke den er der, vil processen fejle.
+                For at kunne finde nomad instanserne for projektet, skal der
+                laves en CI/CD variable med prefixet Nomad instanserne, ved navn
+                JAPMAP_PREFIX. Hvis ikke den er der, vil processen fejle.
               </p>
-              <Input label="Gitlab link til projekt" value={input} placeholder="Gitlab Link" onChange={(e) => setInput(e.target.value)} />
+              <Input
+                label="Gitlab link til projekt"
+                value={input}
+                placeholder="Gitlab Link"
+                onChange={(e) => setInput(e.target.value)}
+              />
             </div>
             <div className="Add_ModalContent_Buttons">
-              <button className="button cancel" onClick={() => setShowModal(false)}>Annuller</button>
-              <button className="button confirm" onClick={() => addProject()}>{loading ? <div className="Spinner_White" /> : "Bekræft"}</button>
+              <button
+                className="button cancel"
+                onClick={() => setShowModal(false)}
+              >
+                Annuller
+              </button>
+              <button className="button confirm" onClick={() => addProject()}>
+                {loading ? <div className="Spinner_White" /> : "Bekræft"}
+              </button>
             </div>
           </div>
         </div>
@@ -75,4 +106,3 @@ const ProjectPage: FC = () => {
 };
 
 export default observer(ProjectPage);
-

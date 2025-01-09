@@ -1,4 +1,10 @@
-import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
+import {
+  Routes,
+  Route,
+  useNavigate,
+  useLocation,
+  Navigate,
+} from "react-router-dom";
 import "./App.scss";
 import { DefaultRoutes } from "./routes/defaultRoutes";
 import Default_Layout from "./layouts/default_layout";
@@ -18,19 +24,18 @@ function App() {
 
   const auth = getAuth();
   onAuthStateChanged(auth, (user) => {
-    console.log(user)
+    console.log(user);
     if (user) {
-      if (location.pathname === '/auth/login') {
-        navigate('/projekter');
+      if (location.pathname === "/auth/login") {
+        navigate("/projekter");
       }
       authStore.setUser(user);
     }
-  })
+  });
 
   useEffect(() => {
-
     document.title = "JapMap | " + titleHelper(location.pathname);
-  }, [location.pathname])
+  }, [location.pathname]);
 
   return (
     <>
@@ -54,7 +59,7 @@ function App() {
             />
           ))}
         </Route>
-      </Routes >
+      </Routes>
     </>
   );
 }
