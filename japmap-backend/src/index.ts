@@ -1,4 +1,4 @@
-import { Elysia } from "elysia";
+import { Context, Elysia } from "elysia";
 import cors from "@elysiajs/cors";
 import { gitlab } from "../http-gitlab";
 import {
@@ -12,6 +12,8 @@ import {
 import { staticPlugin } from "@elysiajs/static";
 import generateAvatar from "github-like-avatar-generator";
 import cron from "@elysiajs/cron";
+import { listenToNomadStream } from "./helpers/nomad";
+import { ServerWebSocket } from "bun";
 
 const generateProfilePicture = async (userId: string) => {
   const avatar = generateAvatar({
@@ -28,6 +30,8 @@ const generateProfilePicture = async (userId: string) => {
   await Bun.write(`./public/profilePictures/${userId}.svg`, svg);
 };
 
+const connectedClients: Set<any> = new Set();
+
 const app = new Elysia()
   .use(cors())
   .use(staticPlugin())
@@ -39,10 +43,22 @@ const app = new Elysia()
         if (!process.env.NOMAD_TOKEN) {
           return;
         }
-        await updateNomadInstancesStatus(process.env.NOMAD_TOKEN);
+        //await updateNomadInstancesStatus(process.env.NOMAD_TOKEN);
       },
     }),
-  )
+  ).ws("/ws", {
+    open(ws) {
+      connectedClients.add(ws);
+      console.log("Client connected");
+    },
+    close(ws) {
+      connectedClients.delete(ws);
+      console.log("Client disconnected");
+    },
+    message(ws, message) {
+      ws.send(message);
+    }
+  })
   .post("/addMap", async ({ body, headers }) => {
     const { gitlabURL, userId } = body;
     const gitlabToken = headers["x-gitlab-token"];
@@ -78,3 +94,15 @@ const app = new Elysia()
 console.log(
   `🦊 Elysia is running at ${app.server?.hostname}:${app.server?.port}`,
 );
+
+const broadcast = (data: any) => {
+  const messageToSend = JSON.stringify(data);
+
+  console.log("Broadcasting message:", messageToSend);
+  console.log("Connected clients:", connectedClients.size);
+  connectedClients.forEach((client) => {
+    client.send(messageToSend);
+  })
+}
+listenToNomadStream(broadcast);
+
