@@ -7,9 +7,10 @@ import Title from "../../components/shared/Title/Title";
 import { observer } from "mobx-react-lite";
 import add_circle from "../../assets/icons/add_circle.svg";
 import Input from "../../components/shared/input/input";
+import { isObservable } from "mobx";
 
-const ProjectPage: FC = () => {
-  const { mapStore, authStore } = useStore();
+const ProjectPage: FC = observer(() => {
+  const { socketStore, mapStore, authStore } = useStore();
   const [input, setInput] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -32,6 +33,19 @@ const ProjectPage: FC = () => {
     fetchProjects();
   }, [authStore.user]);
 
+  useEffect(() => {
+    socketStore.createSocket();
+    socketStore.socket?.addEventListener("message", (event) => {
+      console.log(event.data);
+      const { jobId, status } = JSON.parse(event.data);
+      mapStore.updateStatus(jobId, status);
+    })
+
+    return () => {
+      socketStore.disconnect();
+    }
+  }, [])
+
   const fetchProjects = async () => {
     if (!authStore.user) {
       return;
@@ -40,17 +54,9 @@ const ProjectPage: FC = () => {
     await mapStore.fetchAllMappings(authStore.user!.uid);
   };
 
-  // const t = setTimeout(() => {
-  //  fetchProjects();
-  //  console.log("aaaaa");
-  //}, 1000);
-
-  useEffect(() => {
-    // return clearTimeout(t);
-  }, []);
-
   return (
     <>
+      {console.log("rerender")}
       {showModal && (
         <div className="Add_Modal" onClick={() => setShowModal(false)}>
           <div
@@ -103,6 +109,6 @@ const ProjectPage: FC = () => {
       </div>
     </>
   );
-};
+});
 
-export default observer(ProjectPage);
+export default ProjectPage;

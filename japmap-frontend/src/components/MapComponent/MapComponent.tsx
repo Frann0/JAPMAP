@@ -6,7 +6,7 @@ import Icon from "../shared/icon/Icon";
 import NomadComponent from "../NomadComponent/NomadComponent";
 import { useStore } from "../../stores/store";
 
-const MapComponent = ({ map }: { map: IMapComponent }) => {
+const MapComponent = observer(({ map }: { map: IMapComponent }) => {
   const { mapStore } = useStore();
   return (
     <div key={map.project.id}
@@ -39,6 +39,6 @@ const MapComponent = ({ map }: { map: IMapComponent }) => {
       </div>
     </div>
   );
-};
+});
 
-export default observer(MapComponent);
+export default MapComponent;

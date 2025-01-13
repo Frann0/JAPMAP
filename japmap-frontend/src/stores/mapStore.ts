@@ -5,6 +5,7 @@ import {
   ENomadStatus,
 } from "../interfaces/IMapComponent";
 import { getAllMappings, addMapping } from "../services/mappingService";
+import { transformNomadStatus } from "../helpers/NomadStatus";
 
 export class MapStore {
   mappings: IMapComponent[] = [];
@@ -44,6 +45,27 @@ export class MapStore {
     console.log(userId);
     const mappings = await getAllMappings(userId);
     this.setMappings(mappings);
+  }
+
+  updateStatus(id: string, status: string) {
+    const mapping = this.findMappingOnNomadId(id);
+    console.log(mapping)
+    if (!mapping) {
+      return;
+    }
+
+    mapping.nomadInstances.find((n) => n.id === id)!.status = transformNomadStatus(status) as ENomadStatus;
+
+    mapping.project.instanceCount = mapping.nomadInstances.length;
+    mapping.project.healthyInstanceCount = mapping.nomadInstances.filter(
+      (n) => n.status === ENomadStatus.HEALTHY,
+    ).length;
+  }
+
+  findMappingOnNomadId(id: string) {
+    return this.mappings.find((m) =>
+      m.nomadInstances.find((n) => n.id === id),
+    );
   }
 
   constructor() {

@@ -14,7 +14,6 @@ const updateNomadInstancesStatus = async (id: string, status: string) => {
       status: status,
     },
   });
-  console.log(p)
 }
 
 export const listenToNomadStream = async (broadcast: (data: any) => void) => {
@@ -51,7 +50,6 @@ export const listenToNomadStream = async (broadcast: (data: any) => void) => {
           if (eventString) {
             try {
               const jsonData = JSON.parse(eventString); // Parse the JSON
-              console.log(jsonData)
               for (const event of jsonData.Events) {
                 const jobId = event.Payload.Job.ID;
                 const status = event.Payload.Job.Status;

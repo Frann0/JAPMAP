@@ -1,19 +1,13 @@
-import { Context, Elysia } from "elysia";
+import { Elysia } from "elysia";
 import cors from "@elysiajs/cors";
-import { gitlab } from "../http-gitlab";
 import {
   buildMap,
-  checkForNewNomadInstances,
   getAllMaps,
-  getNomadInstances,
   signUp,
-  updateNomadInstancesStatus,
 } from "./querys/querys";
 import { staticPlugin } from "@elysiajs/static";
 import generateAvatar from "github-like-avatar-generator";
-import cron from "@elysiajs/cron";
 import { listenToNomadStream } from "./helpers/nomad";
-import { ServerWebSocket } from "bun";
 
 const generateProfilePicture = async (userId: string) => {
   const avatar = generateAvatar({
@@ -30,29 +24,18 @@ const generateProfilePicture = async (userId: string) => {
   await Bun.write(`./public/profilePictures/${userId}.svg`, svg);
 };
 
-const connectedClients: Set<any> = new Set();
+const connectedClients: Map<string, any> = new Map();
 
 const app = new Elysia()
   .use(cors())
   .use(staticPlugin())
-  .use(
-    cron({
-      name: "Check for new Nomad instances",
-      pattern: "*/1 * * * *",
-      async run() {
-        if (!process.env.NOMAD_TOKEN) {
-          return;
-        }
-        //await updateNomadInstancesStatus(process.env.NOMAD_TOKEN);
-      },
-    }),
-  ).ws("/ws", {
+  .ws("/ws", {
     open(ws) {
-      connectedClients.add(ws);
+      connectedClients.set(ws.id, ws);
       console.log("Client connected");
     },
     close(ws) {
-      connectedClients.delete(ws);
+      connectedClients.delete(ws.id);
       console.log("Client disconnected");
     },
     message(ws, message) {
@@ -98,8 +81,6 @@ console.log(
 const broadcast = (data: any) => {
   const messageToSend = JSON.stringify(data);
 
-  console.log("Broadcasting message:", messageToSend);
-  console.log("Connected clients:", connectedClients.size);
   connectedClients.forEach((client) => {
     client.send(messageToSend);
   })
