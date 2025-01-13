@@ -30,6 +30,10 @@ export class MapStore {
 
   async addMapping(gitlabURL: string, userId: string) {
     await addMapping(gitlabURL, userId).then((mapping) => {
+      if (mapping.error) {
+        console.log(mapping.error);
+        return;
+      }
       const m = mapping as IMapComponent;
       m.project.open = false;
       this.pushMapping(m);

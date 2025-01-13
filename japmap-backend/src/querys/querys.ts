@@ -72,6 +72,7 @@ const filterNomadInstances = (instances: any) => {
 };
 
 const transformMap = (map) => {
+  console.log(map);
   return {
     project: {
       id: map.gitlabId,
@@ -115,6 +116,10 @@ export const buildMap = async (
   }
 
   const m = addMap(gitlabProject, instances, prefix, userId).then((res) => {
+    if (Object.keys(res).includes("error")) {
+      return res;
+    }
+
     return transformMap(res);
   });
 
@@ -136,7 +141,7 @@ export const getMap = async (gitlabProjectId: number, userId: string) => {
   return transformMap(map);
 };
 
-export const addMap = async (
+const addMap = async (
   gitlabProject,
   nomadInstances,
   nomadPrefix: string,
@@ -148,6 +153,7 @@ export const addMap = async (
     },
   });
 
+
   if (existingProject) {
     const user = await prisma.user.findUnique({
       where: {
@@ -156,7 +162,7 @@ export const addMap = async (
     });
 
     if (!user) {
-      return;
+      return { error: "User not found" };
     }
 
     const newProject = await prisma.gitlabProject.update({
@@ -221,14 +227,14 @@ export const addMap = async (
     },
     include: { nomadInstances: true },
   });
-
+  console.log("map", map)
   return map;
 };
 
-export const getAllMaps = async (userId: string) => {
-  await purgeNomadInstances(userId);
+export const getAllMaps = async (userId: string, nomadToken: string) => {
+  await purgeNomadInstances(userId, nomadToken);
 
-  await checkForNewNomadInstances(userId);
+  await checkForNewNomadInstances(userId, nomadToken);
 
   const maps = await prisma.gitlabProject.findMany({
     where: {
