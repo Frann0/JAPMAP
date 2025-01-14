@@ -1,0 +1,17 @@
+@import "../../assets/variables.scss";
+
+.Groups {
+  display: flex;
+  height: 100%;
+  flex: 1;
+  flex-direction: column;
+  gap: 20px;
+
+  &_Content {
+    flex: 1 0 0;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+}
