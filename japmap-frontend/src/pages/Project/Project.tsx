@@ -16,7 +16,6 @@ const ProjectPage: FC = observer(() => {
   const [loading, setLoading] = useState(false);
 
   const addProject = async () => {
-    console.log(authStore.user);
     setLoading(true);
     if (!authStore.user) {
       return;
@@ -56,7 +55,6 @@ const ProjectPage: FC = observer(() => {
 
   return (
     <>
-      {console.log("rerender")}
       {showModal && (
         <div className="Add_Modal" onClick={() => setShowModal(false)}>
           <div
@@ -103,7 +101,7 @@ const ProjectPage: FC = observer(() => {
         </div>
         <div className="Project_Content">
           {mapStore.mappings.map((mapping: IMapComponent) => (
-            <MapComponent map={mapping} />
+            <MapComponent map={mapping} toggle={() => mapStore.toggleProject(mapping.project.id)} />
           ))}
         </div>
       </div>
