@@ -37,16 +37,13 @@ export class GroupStore {
 
   updateStatus = (id: string, status: string) => {
     const project = this.findProjectOnNomadId(id);
-    console.log("Project", project);
 
     if (!project) {
       return;
     }
 
-    const t = (project.nomadInstances.find((n) => n.id === id)!.status =
-      transformNomadStatus(status) as ENomadStatus);
-
-    console.log(t);
+    project.nomadInstances.find((n) => n.id === id)!.status =
+      transformNomadStatus(status) as ENomadStatus;
 
     project.project.instanceCount = project.nomadInstances.length;
     project.project.healthyInstanceCount = project.nomadInstances.filter(
