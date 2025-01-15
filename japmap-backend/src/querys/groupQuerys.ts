@@ -1,5 +1,11 @@
 import { Prisma, PrismaClient } from "@prisma/client";
-import { addMap, getGitlabProject, getGitlabVariable, getNomadInstances, transformMap } from "./querys";
+import {
+  addMap,
+  getGitlabProject,
+  getGitlabVariable,
+  getNomadInstances,
+  transformMap,
+} from "./querys";
 import { transformGroupMap } from "../helpers/transformGroup";
 import { nomad } from "../../http-nomad";
 
@@ -16,7 +22,7 @@ export const createGroup = async (name: string, userId: string) => {
     },
   });
 
-  return await prisma.group.update({
+  const updatedGroup = await prisma.group.update({
     where: {
       id: group.id,
     },
@@ -33,7 +39,8 @@ export const createGroup = async (name: string, userId: string) => {
     },
   });
 
-}
+  return transformGroupMap(updatedGroup);
+};
 
 export const getGroups = async () => {
   const groups = await prisma.group.findMany({
@@ -45,12 +52,12 @@ export const getGroups = async () => {
         },
       },
     },
-  })
+  });
 
   return groups.map((group) => {
     return transformGroupMap(group);
-  })
-}
+  });
+};
 
 export const getGroupByUserId = async (userId: string) => {
   return await prisma.group.findMany({
@@ -62,7 +69,7 @@ export const getGroupByUserId = async (userId: string) => {
       },
     },
   });
-}
+};
 
 export const addUserToGroup = async (groupId: number, userId: string) => {
   //check if user is already in group
@@ -77,7 +84,7 @@ export const addUserToGroup = async (groupId: number, userId: string) => {
             id: userId,
           },
         },
-      }
+      },
     },
     include: {
       users: true,
@@ -109,13 +116,13 @@ export const addUserToGroup = async (groupId: number, userId: string) => {
       GitlabProjects: {
         include: {
           nomadInstances: true,
-        }
+        },
       },
     },
   });
 
   return transformGroupMap(newGroup);
-}
+};
 
 export const removeUserFromGroup = async (groupId: number, userId: string) => {
   return await prisma.group.update({
@@ -138,7 +145,7 @@ export const removeUserFromGroup = async (groupId: number, userId: string) => {
       },
     },
   });
-}
+};
 
 export const deleteGroup = async (groupId: number) => {
   return await prisma.group.delete({
@@ -146,7 +153,7 @@ export const deleteGroup = async (groupId: number) => {
       id: groupId,
     },
   });
-}
+};
 
 export const addProjectToGroup = async (
   gitlabUrl: string,
@@ -155,7 +162,6 @@ export const addProjectToGroup = async (
   gitlabToken: string,
   nomadToken: string,
 ) => {
-
   const userApartOfGroup = await prisma.group.findUnique({
     where: {
       id: groupId,
@@ -165,7 +171,7 @@ export const addProjectToGroup = async (
             id: userId,
           },
         },
-      }
+      },
     },
     include: {
       users: true,
@@ -173,7 +179,7 @@ export const addProjectToGroup = async (
         include: {
           nomadInstances: true,
         },
-      }
+      },
     },
   });
 
@@ -206,19 +212,24 @@ export const addProjectToGroup = async (
       where: {
         id: groupId,
       },
-      include: { GitlabProjects: { include: { nomadInstances: true } }, users: true },
+      include: {
+        GitlabProjects: { include: { nomadInstances: true } },
+        users: true,
+      },
     });
 
     return transformGroupMap(group);
   }
 
-  const m = addMapToGroup(gitlabProject, instances, prefix, groupId).then((res) => {
-    if (Object.keys(res).includes("error")) {
-      return res;
-    }
+  const m = addMapToGroup(gitlabProject, instances, prefix, groupId).then(
+    (res) => {
+      if (Object.keys(res).includes("error")) {
+        return res;
+      }
 
-    return transformGroupMap(res);
-  });
+      return transformGroupMap(res);
+    },
+  );
 
   return m;
 };
@@ -235,10 +246,7 @@ export const addMapToGroup = async (
     },
   });
 
-
   if (existingProject) {
-
-
     const newProject = await prisma.gitlabProject.update({
       where: {
         gitlabId: gitlabProject.id,
@@ -257,14 +265,15 @@ export const addMapToGroup = async (
       where: {
         id: groupId,
       },
-      include: { GitlabProjects: { include: { nomadInstances: true } }, users: true },
+      include: {
+        GitlabProjects: { include: { nomadInstances: true } },
+        users: true,
+      },
     });
 
     if (!group) {
       return { error: "Group not found" };
     }
-
-
 
     return group;
   }
@@ -310,11 +319,12 @@ export const addMapToGroup = async (
         some: {
           gitlabId: newProject.gitlabId,
         },
-
       },
     },
-    include: { GitlabProjects: { include: { nomadInstances: true } }, users: true },
+    include: {
+      GitlabProjects: { include: { nomadInstances: true } },
+      users: true,
+    },
   });
   return group;
 };
-
