@@ -1,13 +1,10 @@
-import { Prisma, PrismaClient } from "@prisma/client";
+import { PrismaClient } from "@prisma/client";
 import {
-  addMap,
   getGitlabProject,
   getGitlabVariable,
   getNomadInstances,
-  transformMap,
 } from "./querys";
 import { transformGroupMap } from "../helpers/transformGroup";
-import { nomad } from "../../http-nomad";
 
 const prisma = new PrismaClient();
 
@@ -125,26 +122,28 @@ export const addUserToGroup = async (groupId: number, userId: string) => {
 };
 
 export const removeUserFromGroup = async (groupId: number, userId: string) => {
-  return await prisma.group.update({
-    where: {
-      id: groupId,
-    },
-    data: {
-      users: {
-        disconnect: {
-          id: userId,
+  return transformGroupMap(
+    await prisma.group.update({
+      where: {
+        id: groupId,
+      },
+      data: {
+        users: {
+          disconnect: {
+            id: userId,
+          },
         },
       },
-    },
-    include: {
-      users: true,
-      GitlabProjects: {
-        include: {
-          nomadInstances: true,
+      include: {
+        users: true,
+        GitlabProjects: {
+          include: {
+            nomadInstances: true,
+          },
         },
       },
-    },
-  });
+    }),
+  );
 };
 
 export const deleteGroup = async (groupId: number) => {

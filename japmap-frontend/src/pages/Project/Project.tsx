@@ -7,7 +7,6 @@ import Title from "../../components/shared/Title/Title";
 import { observer } from "mobx-react-lite";
 import add_circle from "../../assets/icons/add_circle.svg";
 import Input from "../../components/shared/input/input";
-import { isObservable } from "mobx";
 
 const ProjectPage: FC = observer(() => {
   const { socketStore, mapStore, authStore } = useStore();
@@ -38,12 +37,12 @@ const ProjectPage: FC = observer(() => {
       console.log(event.data);
       const { jobId, status } = JSON.parse(event.data);
       mapStore.updateStatus(jobId, status);
-    })
+    });
 
     return () => {
       socketStore.disconnect();
-    }
-  }, [])
+    };
+  }, []);
 
   const fetchProjects = async () => {
     if (!authStore.user) {
@@ -101,7 +100,10 @@ const ProjectPage: FC = observer(() => {
         </div>
         <div className="Project_Content">
           {mapStore.mappings.map((mapping: IMapComponent) => (
-            <MapComponent map={mapping} toggle={() => mapStore.toggleProject(mapping.project.id)} />
+            <MapComponent
+              map={mapping}
+              toggle={() => mapStore.toggleProject(mapping.project.id)}
+            />
           ))}
         </div>
       </div>
