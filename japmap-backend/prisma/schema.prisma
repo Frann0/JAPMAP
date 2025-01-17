@@ -22,6 +22,14 @@ model User {
   createdAt      DateTime        @default(now())
   updatedAt      DateTime        @updatedAt
   GitlapProjects GitlabProject[]
+  Groups         Group[]
+}
+
+model Group {
+  id             Int             @id @default(autoincrement())
+  name           String
+  users          User[]
+  GitlabProjects GitlabProject[]
 }
 
 model GitlabProject {
@@ -37,6 +45,7 @@ model GitlabProject {
   updatedAt      DateTime        @updatedAt
   nomadInstances NomadInstance[]
   Users          User[]
+  Groups         Group[]
 }
 
 model NomadInstance {

@@ -1,13 +1,16 @@
 import { Elysia } from "elysia";
 import cors from "@elysiajs/cors";
-import {
-  buildMap,
-  getAllMaps,
-  signUp,
-} from "./querys/querys";
+import { buildMap, getAllMaps, signUp } from "./querys/querys";
 import { staticPlugin } from "@elysiajs/static";
 import generateAvatar from "github-like-avatar-generator";
 import { listenToNomadStream } from "./helpers/nomad";
+import {
+  addProjectToGroup,
+  addUserToGroup,
+  createGroup,
+  getGroups,
+  removeUserFromGroup,
+} from "./querys/groupQuerys";
 
 const generateProfilePicture = async (userId: string) => {
   const avatar = generateAvatar({
@@ -40,7 +43,7 @@ const app = new Elysia()
     },
     message(ws, message) {
       ws.send(message);
-    }
+    },
   })
   .post("/addMap", async ({ body, headers }) => {
     const { gitlabURL, userId } = body;
@@ -72,6 +75,80 @@ const app = new Elysia()
       profilePicture: `http://localhost:3000/public/profilePictures/${body.localId}.svg`,
     };
   })
+  .group("/group", (group) =>
+    group
+      .post("/create", async ({ body }) => {
+        const { name, userId } = body;
+
+        if (!name) {
+          return { message: "No name provided" };
+        }
+
+        if (!userId) {
+          return { message: "No user id provided" };
+        }
+
+        return await createGroup(name, userId);
+      })
+      .get("/", async () => {
+        return await getGroups();
+      })
+      .post("/join", async ({ body }) => {
+        const { groupId, userId } = body;
+
+        if (!groupId) {
+          return { message: "No group id provided" };
+        }
+
+        if (!userId) {
+          return { message: "No user id provided" };
+        }
+
+        return await addUserToGroup(groupId, userId);
+      })
+      .post("/leave", async ({ body }) => {
+        const { groupId, userId } = body;
+
+        if (!groupId) {
+          return { message: "No group id provided" };
+        }
+
+        if (!userId) {
+          return { message: "No user id provided" };
+        }
+
+        return await removeUserFromGroup(groupId, userId);
+      })
+      .post("/addProject", async ({ body, headers }) => {
+        const { groupId, userId, gitlabUrl } = body;
+        const gitlabToken = headers["x-gitlab-token"];
+        const nomadToken = headers["x-nomad-token"];
+
+        if (!gitlabToken || !nomadToken) {
+          return { message: "No tokens provided" };
+        }
+
+        if (!groupId) {
+          return { message: "No group id provided" };
+        }
+
+        if (!userId) {
+          return { message: "No user id provided" };
+        }
+
+        if (!gitlabUrl) {
+          return { message: "No gitlab url provided" };
+        }
+
+        return await addProjectToGroup(
+          gitlabUrl,
+          groupId,
+          userId,
+          gitlabToken,
+          nomadToken,
+        );
+      }),
+  )
   .listen(3000);
 
 console.log(
@@ -83,7 +160,6 @@ const broadcast = (data: any) => {
 
   connectedClients.forEach((client) => {
     client.send(messageToSend);
-  })
-}
+  });
+};
 listenToNomadStream(broadcast);
-

@@ -71,7 +71,7 @@ const filterNomadInstances = (instances: any) => {
   return instances.filter((instance: any) => instance.Type === "service");
 };
 
-const transformMap = (map) => {
+export const transformMap = (map) => {
   console.log(map);
   return {
     project: {
@@ -141,7 +141,7 @@ export const getMap = async (gitlabProjectId: number, userId: string) => {
   return transformMap(map);
 };
 
-const addMap = async (
+export const addMap = async (
   gitlabProject,
   nomadInstances,
   nomadPrefix: string,

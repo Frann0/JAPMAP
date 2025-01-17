@@ -49,12 +49,13 @@ export class MapStore {
 
   updateStatus(id: string, status: string) {
     const mapping = this.findMappingOnNomadId(id);
-    console.log(mapping)
+    console.log(mapping);
     if (!mapping) {
       return;
     }
 
-    mapping.nomadInstances.find((n) => n.id === id)!.status = transformNomadStatus(status) as ENomadStatus;
+    mapping.nomadInstances.find((n) => n.id === id)!.status =
+      transformNomadStatus(status) as ENomadStatus;
 
     mapping.project.instanceCount = mapping.nomadInstances.length;
     mapping.project.healthyInstanceCount = mapping.nomadInstances.filter(
@@ -63,9 +64,7 @@ export class MapStore {
   }
 
   findMappingOnNomadId(id: string) {
-    return this.mappings.find((m) =>
-      m.nomadInstances.find((n) => n.id === id),
-    );
+    return this.mappings.find((m) => m.nomadInstances.find((n) => n.id === id));
   }
 
   constructor() {
