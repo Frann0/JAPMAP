@@ -1,12 +1,23 @@
 import { PrismaClient } from "@prisma/client"
-import { nomad } from "../../http-nomad";
 import { Axios } from "axios";
 
 const prisma = new PrismaClient();
 
 
 const updateNomadInstancesStatus = async (id: string, status: string) => {
-  const p = await prisma.nomadInstance.update({
+
+  const existingInstance = await prisma.nomadInstance.findUnique({
+    where: {
+      id: id,
+    },
+  });
+
+  if (!existingInstance) {
+    console.error(`Nomad Instance with ID ${id} not found`);
+    return;
+  }
+
+  await prisma.nomadInstance.update({
     where: {
       id: id,
     },
@@ -30,7 +41,7 @@ export const listenToNomadStream = async (broadcast: (data: any) => void) => {
 
     let buffer = "";
 
-    const response = await axios.get("/event/stream?topic=Job").then((response) => {
+    await axios.get("/event/stream?topic=Job").then((response) => {
       response.data.on('data', (chunk) => {
         buffer += chunk.toString(); // Append chunk to buffer
 
