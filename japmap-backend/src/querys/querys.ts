@@ -72,7 +72,6 @@ const filterNomadInstances = (instances: any) => {
 };
 
 export const transformMap = (map) => {
-  console.log(map);
   return {
     project: {
       id: map.gitlabId,
@@ -227,7 +226,6 @@ export const addMap = async (
     },
     include: { nomadInstances: true },
   });
-  console.log("map", map)
   return map;
 };
 
@@ -259,7 +257,6 @@ export const signUp = async (user) => {
       emailVerified: user.emailVerified,
     },
   });
-  console.log(u);
   return u;
 };
 
