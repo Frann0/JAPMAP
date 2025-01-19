@@ -54,7 +54,6 @@ export const listenToNomadStream = async (broadcast: (data: any) => void) => {
 
           if (eventString === "{}") {
             console.log("Empty event string");
-            buffer = "";
             return;
           }
 
