@@ -1,11 +1,9 @@
-import { PrismaClient } from "@prisma/client"
+import { PrismaClient } from "@prisma/client";
 import { Axios } from "axios";
 
 const prisma = new PrismaClient();
 
-
 const updateNomadInstancesStatus = async (id: string, status: string) => {
-
   const existingInstance = await prisma.nomadInstance.findUnique({
     where: {
       id: id,
@@ -25,7 +23,7 @@ const updateNomadInstancesStatus = async (id: string, status: string) => {
       status: status,
     },
   });
-}
+};
 
 export const listenToNomadStream = async (broadcast: (data: any) => void) => {
   try {
@@ -36,13 +34,13 @@ export const listenToNomadStream = async (broadcast: (data: any) => void) => {
         "Cache-Control": "no-cache",
         "X-Nomad-Token": process.env.NOMAD_TOKEN,
       },
-      responseType: "stream"
+      responseType: "stream",
     });
 
     let buffer = "";
 
     await axios.get("/event/stream?topic=Job").then((response) => {
-      response.data.on('data', (chunk) => {
+      response.data.on("data", (chunk: any) => {
         buffer += chunk.toString(); // Append chunk to buffer
 
         let boundaryIndex;
@@ -50,7 +48,7 @@ export const listenToNomadStream = async (broadcast: (data: any) => void) => {
         while ((boundaryIndex = buffer.indexOf("\n")) !== -1) {
           // Extract the complete JSON object
           const eventString = buffer.slice(0, boundaryIndex).trim();
-          buffer = buffer.slice(boundaryIndex + 2); // Remove processed part from buffer
+          buffer = buffer.slice(boundaryIndex + 1); // Remove processed part from buffer + \n
 
           if (eventString === "{}") {
             console.log("Empty event string");
@@ -68,22 +66,24 @@ export const listenToNomadStream = async (broadcast: (data: any) => void) => {
                 broadcast({ jobId, status });
               }
             } catch (err) {
-              console.error("Error parsing JSON:", err, "Event String:", eventString);
+              console.error(
+                "Error parsing JSON:",
+                err,
+                "Event String:",
+                eventString,
+              );
             }
           }
         }
-      })
-      response.data.on('end', () => {
+      });
+      response.data.on("end", () => {
         console.warn("Stream Finished");
         buffer = "";
         setTimeout(listenToNomadStream, 5000);
-      })
-    })
+      });
+    });
   } catch (error) {
     console.error(error);
     setTimeout(listenToNomadStream, 5000);
   }
-
-}
-
-
+};
